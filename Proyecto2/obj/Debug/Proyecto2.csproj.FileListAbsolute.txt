@@ -1,0 +1,10 @@
+C:\Users\yasmi\source\repos\Proyecto2\bin\Debug\Proyecto2.exe.config
+C:\Users\yasmi\source\repos\Proyecto2\bin\Debug\Proyecto2.exe
+C:\Users\yasmi\source\repos\Proyecto2\bin\Debug\Proyecto2.pdb
+C:\Users\yasmi\source\repos\Proyecto2\obj\Debug\Proyecto2.csprojAssemblyReference.cache
+C:\Users\yasmi\source\repos\Proyecto2\obj\Debug\Proyecto2.Form1.resources
+C:\Users\yasmi\source\repos\Proyecto2\obj\Debug\Proyecto2.Properties.Resources.resources
+C:\Users\yasmi\source\repos\Proyecto2\obj\Debug\Proyecto2.csproj.GenerateResource.cache
+C:\Users\yasmi\source\repos\Proyecto2\obj\Debug\Proyecto2.csproj.CoreCompileInputs.cache
+C:\Users\yasmi\source\repos\Proyecto2\obj\Debug\Proyecto2.exe
+C:\Users\yasmi\source\repos\Proyecto2\obj\Debug\Proyecto2.pdb
