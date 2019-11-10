@@ -21,7 +21,6 @@ namespace Proyecto2
         public Boolean Docabierto = false;
 
         String path;
-        String rutaGlobal;
         int contaerrores = 0;
 
         public Form1()
@@ -36,7 +35,24 @@ namespace Proyecto2
 
         private void SalirToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Console.WriteLine("GUARDAR ARCHIVO");
+
+
+            SaveFileDialog dondeguardo = new SaveFileDialog();
+            dondeguardo.Filter = "Text FIle|*.CS";
+            if (dondeguardo.ShowDialog() == DialogResult.OK)
+            {
+                String midocumento;
+                midocumento = richTextBox1.Text;
+                path = dondeguardo.FileName;
+
+                BinaryWriter bw = new BinaryWriter(File.Create(path));
+                bw.Write(midocumento);
+                bw.Dispose();
+                Docabierto = true;
+
+            }
+           
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -76,30 +92,15 @@ namespace Proyecto2
 
         private void GuardarComoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("GUARDAR ARCHIVO");
-
-
-            SaveFileDialog dondeguardo = new SaveFileDialog();
-            dondeguardo.Filter = "Text FIle|*.CS";
-            if (dondeguardo.ShowDialog() == DialogResult.OK)
-            {
-                String midocumento;
-                midocumento = richTextBox1.Text;
-                path = dondeguardo.FileName;
-
-                BinaryWriter bw = new BinaryWriter(File.Create(path));
-                bw.Write(midocumento);
-                bw.Dispose();
-                Docabierto = true;
-
-            }
+            Console.WriteLine("CARGAR ARCHIVO");
+            buscarArchivo();
+            
 
         }
 
         private void AbrirToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("CARGAR ARCHIVO");
-            buscarArchivo();
+            this.Close();
         }
 
         private void LimpiarEspacioToolStripMenuItem_Click(object sender, EventArgs e)
@@ -107,6 +108,23 @@ namespace Proyecto2
             richTextBox1.Text = " ";
             richTextBox2.Text = " ";
             richTextBox3.Text = " ";
+        }
+
+        private void Button2_Click(object sender, EventArgs e)
+        {
+            richTextBox1.Text = " ";
+            richTextBox2.Text = " ";
+            richTextBox3.Text = " ";
+        }
+
+        private void GenerarReportesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void GenerarTraducciónToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
