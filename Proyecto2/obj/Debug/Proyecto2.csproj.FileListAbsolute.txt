@@ -15,6 +15,5 @@ C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\obj\D
 C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\obj\Debug\Proyecto2.Form1.resources
 C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\obj\Debug\Proyecto2.Properties.Resources.resources
 C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\obj\Debug\Proyecto2.csproj.GenerateResource.cache
-C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\obj\Debug\Proyecto2.csproj.CoreCompileInputs.cache
 C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\obj\Debug\Proyecto2.exe
 C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\obj\Debug\Proyecto2.pdb

@@ -64,7 +64,14 @@ namespace Proyecto2
             // otros
             comentario_unalinea,
             cmultilinea_abrir,
-            cmultilinea_cerrar
+            cmultilinea_cerrar,
+
+            // otros pt.2 
+
+            nombre_algo,
+            float_algo,
+            cuerpo_com1l,
+            cuerpo_comml
             
 
 
@@ -190,6 +197,12 @@ namespace Proyecto2
                     return "verdadero";
                 case Tipo.un_false:
                     return "falso";
+                case Tipo.float_algo:
+                    return "número float";
+                case Tipo.cuerpo_com1l:
+                    return "cuerpo comentario de una línea";
+                case Tipo.cuerpo_comml:
+                    return "cuerpo cometario 2+ líneas";
                 default:
                     return "desconocido";
             }

@@ -22,6 +22,7 @@ namespace Proyecto2
 
         String path;
         int contaerrores = 0;
+        String entrada;
 
         public Form1()
         {
@@ -125,6 +126,14 @@ namespace Proyecto2
         private void GenerarTraducciónToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            entrada = richTextBox1.Text;
+            AnalizadorLéxico funcionaxfa = new AnalizadorLéxico();
+            LinkedList<TokenC> listanueva = funcionaxfa.escanear(entrada);
+            funcionaxfa.imprimirListaTokens(listanueva);
         }
     }
 }
