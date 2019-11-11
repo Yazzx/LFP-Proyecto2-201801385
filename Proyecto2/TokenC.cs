@@ -32,6 +32,7 @@ namespace Proyecto2
             puntoycoma,
             igual,
             cadena,
+            caracter,
             numero, 
             espacio,
             comillas_simples,
@@ -71,7 +72,10 @@ namespace Proyecto2
             nombre_algo,
             float_algo,
             cuerpo_com1l,
-            cuerpo_comml
+            cuerpo_comml,
+
+            // sintáctico
+            ultimo
             
 
 
@@ -203,6 +207,10 @@ namespace Proyecto2
                     return "cuerpo comentario de una línea";
                 case Tipo.cuerpo_comml:
                     return "cuerpo cometario 2+ líneas";
+                case Tipo.caracter:
+                    return "caracter";
+                case Tipo.ultimo:
+                    return "ya el último :3";
                 default:
                     return "desconocido";
             }
