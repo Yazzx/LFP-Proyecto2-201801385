@@ -317,7 +317,16 @@ namespace Proyecto2
                             ListaTokens.AddLast(o1);
                             contatoken++;
                             agregarToken(TokenC.Tipo.PR_VOID);
-                            nvarabierta = true;
+                            prabierta = true;
+                            i -= 1;
+                        }
+                        else if (auxlex.Equals("Main") || auxlex.Equals(" Main") || auxlex.Equals("Main "))
+                        {
+                            ObjToken o1 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 12, "Palabra reservada - main");
+                            ListaTokens.AddLast(o1);
+                            contatoken++;
+                            agregarToken(TokenC.Tipo.pr_main);
+                            prabierta = true;
                             i -= 1;
                         }
                         else if (auxlex.Equals("int"))
@@ -362,6 +371,7 @@ namespace Proyecto2
                             ListaTokens.AddLast(o1);
                             contatoken++;
                             agregarToken(TokenC.Tipo.un_false);
+                            prabierta = true;
                             i -= 1;
                         }
                         else if (auxlex.Equals("true") || auxlex.Equals(" true") || auxlex.Equals("true "))
@@ -370,6 +380,7 @@ namespace Proyecto2
                             ListaTokens.AddLast(o1);
                             contatoken++;
                             agregarToken(TokenC.Tipo.un_true);
+                            prabierta = true;
                             i -= 1;
                         }
                         else if (auxlex.Equals("char") || auxlex.Equals(" char") || auxlex.Equals("char "))

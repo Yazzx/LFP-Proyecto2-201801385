@@ -73,6 +73,7 @@ namespace Proyecto2
             float_algo,
             cuerpo_com1l,
             cuerpo_comml,
+            pr_main,
 
             // sintáctico
             ultimo
@@ -209,6 +210,8 @@ namespace Proyecto2
                     return "cuerpo cometario 2+ líneas";
                 case Tipo.caracter:
                     return "caracter";
+                case Tipo.pr_main:
+                    return "pr_main";
                 case Tipo.ultimo:
                     return "ya el último :3";
                 default:

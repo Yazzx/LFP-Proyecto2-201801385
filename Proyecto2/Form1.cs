@@ -131,9 +131,13 @@ namespace Proyecto2
         private void Button1_Click(object sender, EventArgs e)
         {
             entrada = richTextBox1.Text;
+            Console.WriteLine("INICIANDO EL ANALIZADOR LÉXICO");
             AnalizadorLéxico funcionaxfa = new AnalizadorLéxico();
             LinkedList<TokenC> listanueva = funcionaxfa.escanear(entrada);
             funcionaxfa.imprimirListaTokens(listanueva);
+            Console.WriteLine("INICIANDO ANALIZADOR SINTÁCTICO");
+            //AnalizadorSintáctico awadeuwu = new AnalizadorSintáctico();
+            //awadeuwu.parsear(listanueva);
         }
     }
 }

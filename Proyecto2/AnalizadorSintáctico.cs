@@ -10,40 +10,35 @@ namespace Proyecto2
     {
         int controlToken;
         TokenC tokenActual;
-        LinkedList<TokenC> listaTok;
+        LinkedList<TokenC> listaTokens;
 
-        public void F()
+
+        public void parsear(LinkedList<TokenC> tokens)
         {
-            if (tokenActual.getTipo() == TokenC.Tipo.parentesis_abrir)
-            {
-                //F->  (E)
-                emparejar(Token.Tipo.PARENTESIS_IZQ);
-                E();
-                emparejar(Token.Tipo.PARENTESIS_DER);
-            }
-            else
-            {
-                //F->  NUMERO
-                emparejar(Token.Tipo.NUMERO_ENTERO);
-            }
+            this.listaTokens = tokens;
+            controlToken = 0;
+            tokenActual = listaTokens.ElementAt(controlToken);
+            clase();
+        }
+        public void clase()
+        {
+            emparejar(TokenC.Tipo.PR_CLASS);
+            emparejar(TokenC.Tipo.nombre_algo);
+            emparejar(TokenC.Tipo.llave_abrir);
         }
 
-        // metodo para ver lo que es con lo que tendría que venir y 
-        // si es o no el último token
-        public void emparejar(TokenC.Tipo tipo)
+        public void emparejar(TokenC.Tipo tip)
         {
-            if (tokenActual.getTipo() != tipo)
+            if (tokenActual.getTipo() != tip)
             {
-                Console.WriteLine("Error!! Se esperaba " + getTipoParaError(tipo) + " :C" );
-            }
+                Console.WriteLine("Error se esperaba " + getTipodeError(tip) + "aiuda polisia :C");
+            }            
             if (tokenActual.getTipo() != TokenC.Tipo.ultimo)
             {
                 controlToken += 1;
-                tokenActual = listaTok.ElementAt(controlToken);
+                tokenActual = listaTokens.ElementAt(controlToken);
             }
         }
-
-        // lista de tipos para error
         public string getTipodeError(TokenC.Tipo tipo)
         {
             switch (tipo)
@@ -158,6 +153,5 @@ namespace Proyecto2
                     return "desconocido";
             }
         }
-
     }
 }
