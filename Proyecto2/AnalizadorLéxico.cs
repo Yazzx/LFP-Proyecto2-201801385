@@ -30,6 +30,8 @@ namespace Proyecto2
         Boolean nvarabierta = false;
         Boolean escadena = false;
         Boolean eschar = false;
+        Boolean writelineabierto = false;
+
         int ya_punto = 0;
 
         ObjToken[] arreglotokens;
@@ -78,6 +80,15 @@ namespace Proyecto2
                         {
                             //auxlex += c;
                             contacolumna++;
+                        }
+                        else if (c.CompareTo('.') == 0)
+                        {
+                            auxlex += c;
+                            ObjToken o1 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 3, "punto");
+                            ListaTokens.AddLast(o1);
+                            contatoken++;
+                            contacolumna++;
+                            agregarToken(TokenC.Tipo.punto);
                         }
                         else if (c.CompareTo(',') == 0)
                         {
@@ -259,16 +270,16 @@ namespace Proyecto2
                         }
                         else if (c.CompareTo(' ') == 0 ||  c.CompareTo(';') == 0
                             || c.CompareTo('\t') == 0 || c.CompareTo('\n') == 0 || c.CompareTo(',') == 0
-                            || c.CompareTo('(') == 0)
+                            || c.CompareTo('(') == 0 || c.CompareTo('[') == 0 || c.CompareTo('.') == 0)
                         {
                             contacolumna++;
-
+                            
                             if(c.CompareTo(',') == 0)
                             {
                                 nvarabierta = true;
                                 prabierta = false;
                             }
-
+                            
                             if (prabierta == true)
                             {
                                 prabierta = false;
@@ -278,6 +289,11 @@ namespace Proyecto2
                             {
                                 nvarabierta = false;
                                 estado = 3;
+                            }
+                            else if (writelineabierto == true)
+                            {
+                                writelineabierto = false;
+                                estado = 2;
                             }
                             else {
                                 MessageBox.Show("El texto ingresado contiene errores, por favor" +
@@ -400,9 +416,22 @@ namespace Proyecto2
                             agregarToken(TokenC.Tipo.un_new);
                             i -= 1;
                         }
-                        else if (auxlex.Equals("Console.WriteLine"))
+                        else if (auxlex.Equals("Console"))
                         {
-                            ObjToken o1 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 11, "Palabra reservada - console.writeline");
+                            if (writelineabierto == false)
+                            {
+                                writelineabierto = true;
+                                ObjToken o1 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 11, "Palabra reservada - console");
+                                ListaTokens.AddLast(o1);
+                                contatoken++;
+                                agregarToken(TokenC.Tipo.console_writeline);
+                                i -= 1;
+                            }
+
+                        }
+                        else if (auxlex.Equals("WriteLine") || auxlex.Equals(" WriteLine") || auxlex.Equals("WriteLine "))
+                        {
+                            ObjToken o1 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 11, "Palabra reservada - writeLine");
                             ListaTokens.AddLast(o1);
                             contatoken++;
                             agregarToken(TokenC.Tipo.console_writeline);

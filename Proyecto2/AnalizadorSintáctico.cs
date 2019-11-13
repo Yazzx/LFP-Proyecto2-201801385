@@ -11,7 +11,15 @@ namespace Proyecto2
         int controlToken;
         TokenC tokenActual;
         LinkedList<TokenC> listaTokens;
+        public String cadena_traducción = "#Texto en Python \n \n", cadena_auxiliar;
 
+        //BANDERAS 
+
+        bool esint = false;
+        Boolean esfloat = false;
+        Boolean eschar = false;
+        Boolean esstring = false;
+        Boolean esbool = false;
 
         public void parsear(LinkedList<TokenC> tokens)
         {
@@ -25,13 +33,172 @@ namespace Proyecto2
             emparejar(TokenC.Tipo.PR_CLASS);
             emparejar(TokenC.Tipo.nombre_algo);
             emparejar(TokenC.Tipo.llave_abrir);
+            emparejar(TokenC.Tipo.PR_STATIC);
+            emparejar(TokenC.Tipo.PR_VOID);
+            emparejar(TokenC.Tipo.pr_main);
+            emparejar(TokenC.Tipo.parentesis_abrir);
+            // aquí va el string args
+            emparejar(TokenC.Tipo.parentesis_cerrar);
+            emparejar(TokenC.Tipo.llave_abrir);
+            // todo el metodo dentro de la clase;
+            contenido();
+
+            emparejar(TokenC.Tipo.llave_cerrar);
+            emparejar(TokenC.Tipo.llave_cerrar);
+
+            
         }
+        public void contenido()
+        {
+            if (tokenActual.getTipo() == TokenC.Tipo.pr_int || tokenActual.getTipo() == TokenC.Tipo.pr_float
+                || tokenActual.getTipo() == TokenC.Tipo.pr_string || tokenActual.getTipo() == TokenC.Tipo.pr_bool
+                || tokenActual.getTipo() == TokenC.Tipo.pr_char)
+            {
+                declaracionVariables();
+            }
+
+        }
+
+        public void declaracionVariables()
+        {
+            if (tokenActual.getTipo() == TokenC.Tipo.pr_int)
+            {
+                emparejar(TokenC.Tipo.pr_int);
+                esint = true;
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.pr_float)
+            {
+                emparejar(TokenC.Tipo.pr_float);
+                esfloat = true;
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.pr_string)
+            {
+                emparejar(TokenC.Tipo.pr_string);
+                esstring = true;
+            } 
+            else if (tokenActual.getTipo() == TokenC.Tipo.pr_bool)
+            {
+                emparejar(TokenC.Tipo.pr_bool);
+                esbool = true;
+            } 
+            else if (tokenActual.getTipo() == TokenC.Tipo.pr_char)
+            {
+                emparejar(TokenC.Tipo.pr_char);
+                eschar = true;
+            }
+
+            cadena_auxiliar = "";
+            cadena_auxiliar += tokenActual.getValorToken();
+            emparejar(TokenC.Tipo.nombre_algo);                     
+
+            // si viene un igual empareja
+            if (tokenActual.getTipo() == TokenC.Tipo.igual)
+            {
+                emparejar(TokenC.Tipo.igual);
+                cadena_traducción += cadena_auxiliar +  " = ";
+                asignación();
+            }
+            else
+            {
+                cadena_auxiliar = "";
+            }
+
+            otradeclaración();
+
+            cadena_traducción += "\n";
+            emparejar(TokenC.Tipo.puntoycoma);
+            esint = false;
+            esfloat = false;
+            eschar = false;
+            esstring = false;
+            esbool = false;
+            
+            contenido();
+        }
+
+        public void asignación()
+        {
+            Console.WriteLine(tokenActual.getTipo());
+            Console.WriteLine(esint + " " + esfloat + " " + eschar + " " + esstring + " " + esbool);
+
+            if (esint)
+            {
+                cadena_traducción += tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.numero);
+                //esint = false;
+            }
+            if (esfloat)
+            {
+                cadena_traducción += tokenActual.getValorToken();
+                //esfloat = false;
+                emparejar(TokenC.Tipo.float_algo);
+            }
+            if (eschar)
+            {
+                cadena_traducción += tokenActual.getValorToken();
+                //eschar = false;
+                emparejar(TokenC.Tipo.comillas_simples);
+                cadena_traducción += tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.caracter);
+                cadena_traducción += tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.comillas_simples);
+            }
+            if (esstring)
+            {
+                //esstring = false;
+                cadena_traducción += tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.comillas_dobles);
+                cadena_traducción += tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.cadena);
+                cadena_traducción += tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.comillas_dobles);
+            }
+            if (esbool)
+            {
+                if (tokenActual.getTipo() == TokenC.Tipo.un_false)
+                {
+                    cadena_traducción += tokenActual.getValorToken();
+                    emparejar(TokenC.Tipo.un_false);
+                }
+                if (tokenActual.getTipo() == TokenC.Tipo.un_true)
+                {
+                    cadena_traducción += tokenActual.getValorToken();
+                    emparejar(TokenC.Tipo.un_true);
+                }
+            }
+        }
+        public void otradeclaración()
+        {
+            if (tokenActual.getTipo() == TokenC.Tipo.coma)
+            {
+                emparejar(TokenC.Tipo.coma);
+
+                cadena_auxiliar = "";
+                cadena_auxiliar += tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.nombre_algo);
+
+                if (tokenActual.getTipo() == TokenC.Tipo.igual)
+                {
+                    cadena_traducción += "\n";
+                    emparejar(TokenC.Tipo.igual);
+                    cadena_traducción += cadena_auxiliar + " = ";
+                    asignación();
+                }
+                else
+                {
+                    cadena_auxiliar = "";
+                }
+
+                otradeclaración();
+            }
+        }
+       
 
         public void emparejar(TokenC.Tipo tip)
         {
             if (tokenActual.getTipo() != tip)
             {
-                Console.WriteLine("Error se esperaba " + getTipodeError(tip) + "aiuda polisia :C");
+                Console.WriteLine("Error se esperaba " + getTipodeError(tip) + " :C");
             }            
             if (tokenActual.getTipo() != TokenC.Tipo.ultimo)
             {

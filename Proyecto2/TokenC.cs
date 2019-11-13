@@ -74,9 +74,13 @@ namespace Proyecto2
             cuerpo_com1l,
             cuerpo_comml,
             pr_main,
+            punto,
 
             // sintáctico
-            ultimo
+            ultimo,
+
+            // tipo general
+            
             
 
 
@@ -106,6 +110,10 @@ namespace Proyecto2
         {
             switch (tipoToken)
             {
+                // tipo general
+
+
+                // tipo específico
                 case Tipo.coma:
                     return "coma";
                 case Tipo.corchete_abrir:
@@ -210,6 +218,8 @@ namespace Proyecto2
                     return "cuerpo cometario 2+ líneas";
                 case Tipo.caracter:
                     return "caracter";
+                case Tipo.punto:
+                    return "punto";
                 case Tipo.pr_main:
                     return "pr_main";
                 case Tipo.ultimo:

@@ -17,3 +17,6 @@ C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\obj\D
 C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\obj\Debug\Proyecto2.csproj.GenerateResource.cache
 C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\obj\Debug\Proyecto2.exe
 C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\obj\Debug\Proyecto2.pdb
+C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\bin\Debug\FastColoredTextBox.dll
+C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\bin\Debug\FastColoredTextBox.xml
+C:\Users\yasmi\OneDrive\Documents\GitHub\LFP-Proyecto2-201801385\Proyecto2\obj\Debug\Proyecto2.csproj.CopyComplete
