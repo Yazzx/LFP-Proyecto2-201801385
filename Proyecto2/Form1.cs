@@ -151,7 +151,7 @@ namespace Proyecto2
             LinkedList<TokenC> listanueva = funcionaxfa.escanear(entrada);
             funcionaxfa.imprimirListaTokens(listanueva);
 
-            Console.WriteLine("\n\nINICIANDO ANALIZADOR SINTÁCTICO \n\n");
+           Console.WriteLine("\n\nINICIANDO ANALIZADOR SINTÁCTICO \n\n");
              listanueva.AddLast(new TokenC(TokenC.Tipo.ultimo, "ultimo"));
              AnalizadorSintáctico awadeuwu = new AnalizadorSintáctico();
              awadeuwu.parsear(listanueva);

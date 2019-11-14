@@ -12,7 +12,7 @@ namespace Proyecto2
         int controlToken;
         TokenC tokenActual;
         LinkedList<TokenC> listaTokens;
-        public String cadena_traducción = "", cadena_auxiliar, cadena_clave;
+        public String cadena_traducción = "", cadena_auxiliar, cadena_clave, tab;
         public Dictionary<string, string> tablavalores = new Dictionary<string, string>();
         public Dictionary<string, string> tablatipos = new Dictionary<string, string>();
 
@@ -153,7 +153,7 @@ namespace Proyecto2
             if (tokenActual.getTipo() == TokenC.Tipo.igual)
             {
                 emparejar(TokenC.Tipo.igual);
-                cadena_traducción += cadena_auxiliar + " = ";
+                cadena_traducción += tab + cadena_auxiliar + " = ";
 
                 // si el igual es de un array
                 if (esarray)
@@ -228,6 +228,7 @@ namespace Proyecto2
             contenido();
         }
 
+        // aqui solo va lo que se pone desúes del igual
         public void asignación()
         {
             //Console.WriteLine(tokenActual.getTipo());
@@ -340,7 +341,7 @@ namespace Proyecto2
 
                 if (tokenActual.getTipo() == TokenC.Tipo.igual)
                 {
-                    cadena_traducción += "\n";
+                    cadena_traducción += "\n" + tab;
                     emparejar(TokenC.Tipo.igual);
                     cadena_traducción += cadena_auxiliar + " = ";
                     asignación();
@@ -361,11 +362,11 @@ namespace Proyecto2
             cadena_auxiliar = "";
             cadena_auxiliar += tokenActual.getValorToken();
             cadena_clave = "";
-            cadena_clave = tokenActual.getValorToken();
+            cadena_clave = tab + tokenActual.getValorToken();
             emparejar(TokenC.Tipo.nombre_algo);
 
             emparejar(TokenC.Tipo.igual);
-            cadena_traducción += cadena_auxiliar + " = ";
+            cadena_traducción += tab + cadena_auxiliar + " = ";
 
             if (tokenActual.getTipo() == TokenC.Tipo.numero)
             {
@@ -452,7 +453,7 @@ namespace Proyecto2
             emparejar(TokenC.Tipo.console_writeline);
             emparejar(TokenC.Tipo.parentesis_abrir);
 
-            cadena_traducción += "print(";
+            cadena_traducción += tab + "print(";
 
             loquevienedentrodelwriteline();
 
@@ -577,7 +578,48 @@ namespace Proyecto2
 
         public void sentenciaif()
         {
+            if (tokenActual.getTipo() == TokenC.Tipo.un_if)
+            {
+                cadena_auxiliar = "";
+                emparejar(TokenC.Tipo.un_if);
+                cadena_traducción += tab + "if ";
+                emparejar(TokenC.Tipo.parentesis_abrir);
 
+                comparacion();
+
+                emparejar(TokenC.Tipo.parentesis_cerrar);
+                cadena_traducción += ":";
+                emparejar(TokenC.Tipo.llave_abrir);
+                cadena_traducción += "\n";
+
+                tab += "\t";
+
+                sentenciaif();
+                contenido();
+
+                emparejar(TokenC.Tipo.llave_cerrar);
+                tab = "";
+
+                sentenciaelse();
+                contenido();
+            }
+        }
+
+        public void comparacion()
+        {
+
+
+        }
+        public void sentenciaelse()
+        {
+
+            if (tokenActual.getTipo() == TokenC.Tipo.un_else)
+            {
+                emparejar(TokenC.Tipo.un_else);
+                tab = "/t";
+                contenido();
+            }
+            
         }
 
         #endregion
