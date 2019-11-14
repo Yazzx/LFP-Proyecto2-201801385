@@ -30,7 +30,7 @@ namespace Proyecto2
         Boolean nvarabierta = false;
         Boolean escadena = false;
         Boolean eschar = false;
-        Boolean writelineabierto = false;
+        Boolean writelineabierto = false, dentroparentesiswriteline = false;
 
         int ya_punto = 0;
 
@@ -51,7 +51,7 @@ namespace Proyecto2
 
                 switch (estado)
                 {
-                    // el que los manda a todos lados
+                    #region el que los manda a todos lados
                     case 0:
                         if (char.IsLetter(c))
                         {
@@ -75,11 +75,13 @@ namespace Proyecto2
                             contatoken++;
                             contacolumna++;
                             agregarToken(TokenC.Tipo.puntoycoma);
+                            nvarabierta = false;
+                            prabierta = true;
                         }
                         else if (c.CompareTo(' ') == 0)
                         {
                             //auxlex += c;
-                            contacolumna++;
+                            contacolumna++;                            
                         }
                         else if (c.CompareTo('.') == 0)
                         {
@@ -101,6 +103,20 @@ namespace Proyecto2
                             nvarabierta = true;
                             agregarToken(TokenC.Tipo.coma);
                         }
+                        else if (c.CompareTo('+') == 0)
+                        {
+                            estado = 13;
+                            auxlex += c;
+                            contacolumna++;
+
+                        }
+                        else if (c.CompareTo('-') == 0)
+                        {
+                            estado = 15;
+                            auxlex += c;
+                            contacolumna++;
+
+                        }
                         else if (c.CompareTo('=') == 0)
                         {
                             estado = 6;
@@ -113,14 +129,15 @@ namespace Proyecto2
                             auxlex += c;
                             contacolumna++;
                         }
-                        else if (c.CompareTo('\n') == 0)
+                        else if (c.CompareTo('\n') == 0 || c.Equals("\r")
+                            || c.Equals("\n"))
                         {
                             auxlex = "";
                             estado = 0;
                             contafila++;
                             contacolumna = 0;
                         }
-                        else if (c.CompareTo('\t') == 0)
+                        else if (c.CompareTo('\t') == 0  || c.Equals("\t"))
                         {
                             auxlex = "";
                             estado = 0;
@@ -190,6 +207,8 @@ namespace Proyecto2
                             contatoken++;
                             agregarToken(TokenC.Tipo.llave_cerrar);
                             contacolumna++;
+                            prabierta = true;
+                            nvarabierta = false;
                         }
                         else if (c.CompareTo('[') == 0)
                         {
@@ -203,6 +222,7 @@ namespace Proyecto2
                         }
                         else if (c.CompareTo(']') == 0)
                         {
+
                             auxlex += c;
 
                             ObjToken o1 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 14, "corchete que cierra");
@@ -210,6 +230,8 @@ namespace Proyecto2
                             contatoken++;
                             agregarToken(TokenC.Tipo.corchete_cerrar);
                             contacolumna++;
+
+
                         }
                         else if (c.CompareTo('(') == 0)
                         {
@@ -220,6 +242,12 @@ namespace Proyecto2
                             contatoken++;
                             agregarToken(TokenC.Tipo.parentesis_abrir);
                             contacolumna++;
+
+                            if (dentroparentesiswriteline)
+                            {
+                                //estado = 13;
+                                prabierta = true;
+                            }
                         }
                         else if (c.CompareTo(')') == 0)
                         {
@@ -230,6 +258,11 @@ namespace Proyecto2
                             contatoken++;
                             agregarToken(TokenC.Tipo.parentesis_cerrar);
                             contacolumna++;
+
+                            if (dentroparentesiswriteline)
+                            {
+                                dentroparentesiswriteline = false;
+                            }
                         }
                         else
                         {
@@ -241,16 +274,25 @@ namespace Proyecto2
                             }
                             else
                             {
-                                Console.WriteLine("Error lexico con: " + c);
-                                ErrorLéxico e1 = new ErrorLéxico(contaerror, contafila, contacolumna, c, descerror);
-                                ListaDeErrores.AddLast(e1);
-                                contacolumna++;
-                                estado = 0;
-                                auxlex = "";
+                                if (c.CompareTo('\n') == 0 || c.CompareTo('\t') == 0 || c.CompareTo('\r') == 0
+                                    || c.Equals("\n") || c.Equals("\r") || c.Equals("\n\t") || c.Equals("\t"))
+                                {
+
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Error lexico con: " + c);
+                                    ErrorLéxico e1 = new ErrorLéxico(contaerror, contafila, contacolumna, c, descerror);
+                                    ListaDeErrores.AddLast(e1);
+                                    contacolumna++;
+                                    estado = 0;
+                                    auxlex = "";
+                                }
                             }
                         }
                         break;
-                    // si comienza por char
+                    #endregion
+                    #region si comienza por char
                     case 1:
                         if (Char.IsLetter(c))
                         {
@@ -297,7 +339,7 @@ namespace Proyecto2
                             }
                             else {
                                 MessageBox.Show("El texto ingresado contiene errores, por favor" +
-                                "corrígalos e intente de nuevo :c \n" +"->"+ auxlex + "<-\n" +  c, "Atención!! ");
+                                "corrígalos e intente de nuevo :c \n" +"->"+ auxlex + "<-\n" +  c, "Error de Léxico ");
                                 ErrorLéxico e1 = new ErrorLéxico(contaerror, contafila, contacolumna, c, descerror);
                                 ListaDeErrores.AddLast(e1);
                                 contacolumna++;
@@ -307,7 +349,8 @@ namespace Proyecto2
                             i -= 1;
                         }                        
                         break;
-                    // si es palabra reservada
+                    #endregion
+                    #region si es palabra reservada
                     case 2:
                         if (auxlex.Equals("class"))
                         {
@@ -414,6 +457,7 @@ namespace Proyecto2
                             ListaTokens.AddLast(o1);
                             contatoken++;
                             agregarToken(TokenC.Tipo.un_new);
+                            prabierta = true;
                             i -= 1;
                         }
                         else if (auxlex.Equals("Console"))
@@ -427,6 +471,7 @@ namespace Proyecto2
                                 agregarToken(TokenC.Tipo.console_writeline);
                                 i -= 1;
                             }
+                            dentroparentesiswriteline = true;
 
                         }
                         else if (auxlex.Equals("WriteLine") || auxlex.Equals(" WriteLine") || auxlex.Equals("WriteLine "))
@@ -436,6 +481,7 @@ namespace Proyecto2
                             contatoken++;
                             agregarToken(TokenC.Tipo.console_writeline);
                             i -= 1;
+                            dentroparentesiswriteline = true;
                         }
                         else if (auxlex.Equals("if"))
                         {
@@ -524,7 +570,8 @@ namespace Proyecto2
                           i -= 1;
                         }
                         break;
-                    // si es nombre de variable
+                    #endregion
+                    #region si es nombre de variable
                     case 3:
                         ObjToken o2 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 11, "nombre de algo");
                         ListaTokens.AddLast(o2);
@@ -534,7 +581,8 @@ namespace Proyecto2
                         nvarabierta = false;
                         prabierta = true;
                         break;
-                    // si es un dígito
+                    #endregion
+                    #region si es un dígito
                     case 4:
                         if (Char.IsDigit(c))
                         {
@@ -573,7 +621,8 @@ namespace Proyecto2
                             i -= 1;
                         }
                         break;
-                    // si es un float
+                    #endregion
+                    #region si es un float
                     case 5:
                         ObjToken o5 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 13, "Número float");
                         ListaTokens.AddLast(o5);
@@ -581,7 +630,9 @@ namespace Proyecto2
                         agregarToken(TokenC.Tipo.float_algo);
                         i -= 1;
                         break;
-                    // si es un igual
+                    #endregion
+
+                    #region si es un igual
                     case 6:
                         if (c.Equals('='))
                         {
@@ -599,7 +650,8 @@ namespace Proyecto2
                             i -= 1;
                         }
                         break;
-                    // si es un igual igual
+                    #endregion
+                    #region si es un igual igual
                     case 7:
                         ObjToken o6 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 12, "Igual Igual");
                         ListaTokens.AddLast(o6);
@@ -607,7 +659,8 @@ namespace Proyecto2
                         agregarToken(TokenC.Tipo.igualigual);
                         i -= 1;
                         break;
-                    // si es un dividido
+                    #endregion
+                    #region si es un dividido
                     case 8:
                         if (c.Equals('/'))
                         {
@@ -625,7 +678,8 @@ namespace Proyecto2
                             i -= 1;
                         }
                         break;
-                    // inicio comentario
+                    #endregion
+                    #region inicio comentario
                     case 9:
                         ObjToken o8 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 12, "com. 1 linea");
                         ListaTokens.AddLast(o8);
@@ -634,7 +688,8 @@ namespace Proyecto2
                         i -= 1;
                         estado = 10;
                         break;
-                    // cuerpo comentario 1 linea
+                    #endregion
+                    #region cuerpo comentario 1 linea
                     case 10:
 
                         if (c.CompareTo('\n') == 0)
@@ -652,6 +707,8 @@ namespace Proyecto2
                             auxlex += c;
                         }                       
                         break;
+                    #endregion
+                    #region cadenas
                     case 11:
                         if (c.CompareTo('"') == 0)
                         {
@@ -668,6 +725,8 @@ namespace Proyecto2
                             auxlex += c;
                         }
                         break;
+                    #endregion
+                    #region caracteres
                     case 12:
                         if (c.CompareTo('\'') == 0)
                         {
@@ -684,6 +743,67 @@ namespace Proyecto2
                             auxlex += c;
                         }
                         break;
+                    #endregion
+                    #region si comienza por mas
+                    case 13:
+                       if (c.Equals('+'))
+                        {
+                            estado = 14;
+                            auxlex += c;
+                            contacolumna++;
+                            //así voy juntando mases
+                        }
+                        else
+                        {
+                            ObjToken o1 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 3, "signo mas");
+                            ListaTokens.AddLast(o1);
+                            contatoken++;
+                            contacolumna++;
+                            agregarToken(TokenC.Tipo.mas);
+                            i -= 1;
+                        }
+
+                        break;
+                    case 14:
+
+                        ObjToken o15 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 12, "mas mas");
+                        ListaTokens.AddLast(o15);
+                        contatoken++;
+                        agregarToken(TokenC.Tipo.masmas);
+                        i -= 1;
+
+                        break;
+                    #endregion
+                    #region si comienza por menos
+                    case 15:
+                        if (c.Equals('-'))
+                        {
+                            estado = 16;
+                            auxlex += c;
+                            contacolumna++;
+                            //así voy juntando menoss
+                        }
+                        else
+                        {
+                            ObjToken o1 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 3, "signo menos");
+                            ListaTokens.AddLast(o1);
+                            contatoken++;
+                            contacolumna++;
+                            agregarToken(TokenC.Tipo.menos);
+                            i -= 1;
+                        }
+
+                        break;
+                    case 16:
+
+                        ObjToken o16 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 12, "menos menos");
+                        ListaTokens.AddLast(o16);
+                        contatoken++;
+                        agregarToken(TokenC.Tipo.menosmenos);
+                        i -= 1;
+
+                        break;
+                        #endregion
                 }
 
             }

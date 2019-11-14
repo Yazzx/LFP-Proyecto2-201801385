@@ -27,7 +27,7 @@ namespace Proyecto2
         public Form1()
         {
             InitializeComponent();
-            fastColoredTextBox1.Text = "class AiudaPolisia" + "\r\n" + "  {" + "\r\n" + "    static void Main()" + "\r\n" + "    { " + "\r\n" + "\r\n" + "    }" + "\r\n" + "  }";
+            fastColoredTextBox1.Text = "class AiudaPolisia" + "\r\n" + "  {" + "\r\n" + "    static void Main( string[] args )" + "\r\n" + "    { " + "\r\n" + "\r\n" + "    }" + "\r\n" + "  }";
         }
 
         private void ArchivoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -107,7 +107,7 @@ namespace Proyecto2
 
         private void LimpiarEspacioToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            fastColoredTextBox1.Text = "class AiudaPolisia" + "\r\n" + "  {" + "\r\n" + "    static void Main()" + "\r\n" + "    { " + "\r\n" + "\r\n" + "    }" + "\r\n" + "  }";
+            fastColoredTextBox1.Text = "class AiudaPolisia" + "\r\n" + "  {" + "\r\n" + "    static void Main( string[] args )" + "\r\n" + "    { " + "\r\n" + "\r\n" + "    }" + "\r\n" + "  }";
 
             fastColoredTextBox2.Text = " ";
             richTextBox3.Text = " ";
@@ -115,7 +115,7 @@ namespace Proyecto2
 
         private void Button2_Click(object sender, EventArgs e)
         {
-            fastColoredTextBox1.Text = "class AiudaPolisia" + "\r\n" + "  {" + "\r\n" + "    static void Main()" + "\r\n" + "    { " + "\r\n" + "\r\n" + "    }" + "\r\n" + "  }";
+            fastColoredTextBox1.Text = "class AiudaPolisia" + "\r\n" + "  {" + "\r\n" + "    static void Main( string[] args )" + "\r\n" + "    { " + "\r\n" + "\r\n" + "    }" + "\r\n" + "  }";
 
             fastColoredTextBox2.Text = " ";
             richTextBox3.Text = " ";
@@ -146,18 +146,32 @@ namespace Proyecto2
         private void Button1_Click(object sender, EventArgs e)
         {
             entrada = fastColoredTextBox1.Text;
-            Console.WriteLine("INICIANDO EL ANALIZADOR LÉXICO");
+            Console.WriteLine("\n\nINICIANDO EL ANALIZADOR LÉXICO\n\n");
             AnalizadorLéxico funcionaxfa = new AnalizadorLéxico();
             LinkedList<TokenC> listanueva = funcionaxfa.escanear(entrada);
             funcionaxfa.imprimirListaTokens(listanueva);
 
-            Console.WriteLine("INICIANDO ANALIZADOR SINTÁCTICO");
-            listanueva.AddLast(new TokenC(TokenC.Tipo.ultimo, "ultimo"));
-            AnalizadorSintáctico awadeuwu = new AnalizadorSintáctico();
-            awadeuwu.parsear(listanueva);
-            Console.WriteLine("Ya terminó de analizar");
+            Console.WriteLine("\n\nINICIANDO ANALIZADOR SINTÁCTICO \n\n");
+             listanueva.AddLast(new TokenC(TokenC.Tipo.ultimo, "ultimo"));
+             AnalizadorSintáctico awadeuwu = new AnalizadorSintáctico();
+             awadeuwu.parsear(listanueva);
+             Console.WriteLine("Ya terminó de analizar");
 
-            fastColoredTextBox2.Text = awadeuwu.cadena_traducción;
+             fastColoredTextBox2.Text = awadeuwu.cadena_traducción;
+
+            Console.WriteLine("\n\nTABLA DE VALORES\n\n");
+            foreach (KeyValuePair<string, string> kvp in awadeuwu.tablavalores)
+            {
+                Console.WriteLine("Key = {0}, Value = {1}",
+                                  kvp.Key, kvp.Value);
+            }
+
+            Console.WriteLine("\n\nTABLA DE TIPOS\n\n");
+            foreach (KeyValuePair<string, string> kvp in awadeuwu.tablatipos)
+            {
+                Console.WriteLine("Key = {0}, Value = {1}",
+                                  kvp.Key, kvp.Value);
+            }
         }
 
         private void fastColoredTextBox2_Load(object sender, EventArgs e)

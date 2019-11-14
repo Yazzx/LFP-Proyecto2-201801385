@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Proyecto2
 {
@@ -11,23 +12,19 @@ namespace Proyecto2
         int controlToken;
         TokenC tokenActual;
         LinkedList<TokenC> listaTokens;
-        public String cadena_traducción = "#Texto en Python \n \n", cadena_auxiliar;
+        public String cadena_traducción = "", cadena_auxiliar, cadena_clave;
+        public Dictionary<string, string> tablavalores = new Dictionary<string, string>();
+        public Dictionary<string, string> tablatipos = new Dictionary<string, string>();
 
         //BANDERAS 
 
         bool esint = false;
-        Boolean esfloat = false;
+        Boolean esfloat = false, hayerror = false, yaimportarray = false;
         Boolean eschar = false;
         Boolean esstring = false;
-        Boolean esbool = false;
+        Boolean esbool = false, esarray = false;
 
-        public void parsear(LinkedList<TokenC> tokens)
-        {
-            this.listaTokens = tokens;
-            controlToken = 0;
-            tokenActual = listaTokens.ElementAt(controlToken);
-            clase();
-        }
+       
         public void clase()
         {
             emparejar(TokenC.Tipo.PR_CLASS);
@@ -37,7 +34,10 @@ namespace Proyecto2
             emparejar(TokenC.Tipo.PR_VOID);
             emparejar(TokenC.Tipo.pr_main);
             emparejar(TokenC.Tipo.parentesis_abrir);
-            // aquí va el string args
+            emparejar(TokenC.Tipo.pr_string);
+            emparejar(TokenC.Tipo.corchete_abrir);
+            emparejar(TokenC.Tipo.corchete_cerrar);
+            emparejar(TokenC.Tipo.nombre_algo);
             emparejar(TokenC.Tipo.parentesis_cerrar);
             emparejar(TokenC.Tipo.llave_abrir);
             // todo el metodo dentro de la clase;
@@ -46,19 +46,42 @@ namespace Proyecto2
             emparejar(TokenC.Tipo.llave_cerrar);
             emparejar(TokenC.Tipo.llave_cerrar);
 
-            
+
         }
         public void contenido()
         {
-            if (tokenActual.getTipo() == TokenC.Tipo.pr_int || tokenActual.getTipo() == TokenC.Tipo.pr_float
+            if (hayerror)
+            {
+
+            }
+            else
+            {
+                if (tokenActual.getTipo() == TokenC.Tipo.pr_int || tokenActual.getTipo() == TokenC.Tipo.pr_float
                 || tokenActual.getTipo() == TokenC.Tipo.pr_string || tokenActual.getTipo() == TokenC.Tipo.pr_bool
                 || tokenActual.getTipo() == TokenC.Tipo.pr_char)
-            {
-                declaracionVariables();
+                {
+                    declaracionVariables();
+                }
+
+                if (tokenActual.getTipo() == TokenC.Tipo.nombre_algo)
+                {
+                    asignacionalopela();
+                }
+
+                if (tokenActual.getTipo() == TokenC.Tipo.console_writeline)
+                {
+                    imprimiralgo();
+                }
+
+                if (tokenActual.getTipo() == TokenC.Tipo.un_if)
+                {
+                    sentenciaif();
+                }
             }
 
         }
 
+        #region declaracion y asignacion con palabra reservada
         public void declaracionVariables()
         {
             if (tokenActual.getTipo() == TokenC.Tipo.pr_int)
@@ -75,28 +98,115 @@ namespace Proyecto2
             {
                 emparejar(TokenC.Tipo.pr_string);
                 esstring = true;
-            } 
+            }
             else if (tokenActual.getTipo() == TokenC.Tipo.pr_bool)
             {
                 emparejar(TokenC.Tipo.pr_bool);
                 esbool = true;
-            } 
+            }
             else if (tokenActual.getTipo() == TokenC.Tipo.pr_char)
             {
                 emparejar(TokenC.Tipo.pr_char);
                 eschar = true;
             }
 
+            // si es array
+            if (tokenActual.getTipo() == TokenC.Tipo.corchete_abrir)
+            {
+                esarray = true;
+                emparejar(TokenC.Tipo.corchete_abrir);
+                emparejar(TokenC.Tipo.corchete_cerrar);
+                if (yaimportarray)
+                {
+
+                }
+                else
+                {
+                    cadena_traducción = "from numpy import array\n\n" + cadena_traducción;
+                    yaimportarray = true;
+                }
+
+            }
+
             cadena_auxiliar = "";
             cadena_auxiliar += tokenActual.getValorToken();
-            emparejar(TokenC.Tipo.nombre_algo);                     
+            cadena_clave += tokenActual.getValorToken();
+
+            try
+            {
+
+                tablavalores.Add(cadena_clave, "");
+                tablatipos.Add(cadena_clave, "");
+            }
+
+            catch (ArgumentException)
+            {
+
+                MessageBox.Show("Hay dos variables con el mismo nombre:  " +
+                         "= \""+ cadena_clave + "\" !! :C", "Error Sintáctico");
+            }
+            
+
+            emparejar(TokenC.Tipo.nombre_algo);
 
             // si viene un igual empareja
             if (tokenActual.getTipo() == TokenC.Tipo.igual)
             {
                 emparejar(TokenC.Tipo.igual);
-                cadena_traducción += cadena_auxiliar +  " = ";
-                asignación();
+                cadena_traducción += cadena_auxiliar + " = ";
+
+                // si el igual es de un array
+                if (esarray)
+                {
+                    if (tokenActual.getTipo() == TokenC.Tipo.un_new)
+                    {
+                        emparejar(TokenC.Tipo.un_new);
+
+                        if (tokenActual.getTipo() == TokenC.Tipo.pr_int && esint)
+                        {
+                            emparejar(TokenC.Tipo.pr_int);
+                        }
+                        else if (tokenActual.getTipo() == TokenC.Tipo.pr_float && esfloat)
+                        {
+                            emparejar(TokenC.Tipo.pr_float);
+                        }
+                        else if (tokenActual.getTipo() == TokenC.Tipo.pr_string && esstring)
+                        {
+                            emparejar(TokenC.Tipo.pr_string);
+                        }
+                        else if (tokenActual.getTipo() == TokenC.Tipo.pr_bool && esbool)
+                        {
+                            emparejar(TokenC.Tipo.pr_bool);
+                        }
+                        else if (tokenActual.getTipo() == TokenC.Tipo.pr_char && eschar)
+                        {
+                            emparejar(TokenC.Tipo.pr_char);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Revisa los tipos de tu arreglo :C");
+                        }
+
+                        emparejar(TokenC.Tipo.corchete_abrir);
+                        cadena_traducción += "[";
+                        emparejar(TokenC.Tipo.corchete_cerrar);
+                        cadena_traducción += "]";
+                    }
+                    else
+                    {
+                        emparejar(TokenC.Tipo.llave_abrir);
+                        cadena_traducción += "[";
+                        asignación();
+                        otradeclaración();
+                        emparejar(TokenC.Tipo.llave_cerrar);
+                        cadena_traducción += "]";
+                    }
+                }
+                else
+                {
+                    asignación();
+                }
+
             }
             else
             {
@@ -106,39 +216,51 @@ namespace Proyecto2
             otradeclaración();
 
             cadena_traducción += "\n";
+            cadena_clave = "";
             emparejar(TokenC.Tipo.puntoycoma);
             esint = false;
             esfloat = false;
             eschar = false;
             esstring = false;
             esbool = false;
-            
+            esarray = false;
+
             contenido();
         }
 
         public void asignación()
         {
-            Console.WriteLine(tokenActual.getTipo());
-            Console.WriteLine(esint + " " + esfloat + " " + eschar + " " + esstring + " " + esbool);
+            //Console.WriteLine(tokenActual.getTipo());
+            //Console.WriteLine(esint + " " + esfloat + " " + eschar + " " + esstring + " " + esbool);
 
             if (esint)
             {
                 cadena_traducción += tokenActual.getValorToken();
+
+                tablatipos[cadena_clave] = "int";
+                tablavalores[cadena_clave] = tokenActual.getValorToken();
+
                 emparejar(TokenC.Tipo.numero);
                 //esint = false;
             }
             if (esfloat)
             {
                 cadena_traducción += tokenActual.getValorToken();
-                //esfloat = false;
+
+                tablatipos[cadena_clave] = "float";
+                tablavalores[cadena_clave] = tokenActual.getValorToken();
+
                 emparejar(TokenC.Tipo.float_algo);
             }
             if (eschar)
             {
                 cadena_traducción += tokenActual.getValorToken();
-                //eschar = false;
                 emparejar(TokenC.Tipo.comillas_simples);
                 cadena_traducción += tokenActual.getValorToken();
+
+                tablatipos[cadena_clave] = "char";
+                tablavalores[cadena_clave] = "'" + tokenActual.getValorToken() + "'" ;
+
                 emparejar(TokenC.Tipo.caracter);
                 cadena_traducción += tokenActual.getValorToken();
                 emparejar(TokenC.Tipo.comillas_simples);
@@ -149,6 +271,10 @@ namespace Proyecto2
                 cadena_traducción += tokenActual.getValorToken();
                 emparejar(TokenC.Tipo.comillas_dobles);
                 cadena_traducción += tokenActual.getValorToken();
+
+                tablatipos[cadena_clave] = "string";
+                tablavalores[cadena_clave] = "'" + tokenActual.getValorToken() + "'";
+
                 emparejar(TokenC.Tipo.cadena);
                 cadena_traducción += tokenActual.getValorToken();
                 emparejar(TokenC.Tipo.comillas_dobles);
@@ -158,11 +284,19 @@ namespace Proyecto2
                 if (tokenActual.getTipo() == TokenC.Tipo.un_false)
                 {
                     cadena_traducción += tokenActual.getValorToken();
+
+                    tablatipos[cadena_clave] = "bool";
+                    tablavalores[cadena_clave] = tokenActual.getValorToken();
+
                     emparejar(TokenC.Tipo.un_false);
                 }
                 if (tokenActual.getTipo() == TokenC.Tipo.un_true)
                 {
                     cadena_traducción += tokenActual.getValorToken();
+
+                    tablatipos[cadena_clave] = "bool";
+                    tablavalores[cadena_clave] = tokenActual.getValorToken();
+
                     emparejar(TokenC.Tipo.un_true);
                 }
             }
@@ -171,11 +305,38 @@ namespace Proyecto2
         {
             if (tokenActual.getTipo() == TokenC.Tipo.coma)
             {
-                emparejar(TokenC.Tipo.coma);
-
                 cadena_auxiliar = "";
-                cadena_auxiliar += tokenActual.getValorToken();
-                emparejar(TokenC.Tipo.nombre_algo);
+                cadena_clave = "";
+                emparejar(TokenC.Tipo.coma);
+                if (esarray)
+                {
+                    cadena_traducción += ", ";
+                    cadena_auxiliar = "";
+                    cadena_auxiliar += tokenActual.getValorToken();
+                    asignación();
+                }
+                else
+                {
+                    cadena_auxiliar = "";
+                    cadena_clave = tokenActual.getValorToken();
+                    cadena_auxiliar += tokenActual.getValorToken();
+
+                    try
+                    {
+
+                        tablavalores.Add(cadena_clave, "");
+                        tablatipos.Add(cadena_clave, "");
+                    }
+
+                    catch (ArgumentException)
+                    {
+
+                        MessageBox.Show("Hay dos variables con el mismo nombre:  " +
+                                 "= \"" + cadena_clave + "\" !! :C", "Error Sintáctico");
+                    }
+
+                    emparejar(TokenC.Tipo.nombre_algo);
+                }
 
                 if (tokenActual.getTipo() == TokenC.Tipo.igual)
                 {
@@ -192,14 +353,250 @@ namespace Proyecto2
                 otradeclaración();
             }
         }
-       
+        #endregion
+
+        #region asignación a lo pela
+        public void asignacionalopela()
+        {
+            cadena_auxiliar = "";
+            cadena_auxiliar += tokenActual.getValorToken();
+            cadena_clave = "";
+            cadena_clave = tokenActual.getValorToken();
+            emparejar(TokenC.Tipo.nombre_algo);
+
+            emparejar(TokenC.Tipo.igual);
+            cadena_traducción += cadena_auxiliar + " = ";
+
+            if (tokenActual.getTipo() == TokenC.Tipo.numero)
+            {
+                cadena_traducción += tokenActual.getValorToken();
+                
+                tablavalores[cadena_clave] = tokenActual.getValorToken();
+
+                emparejar(TokenC.Tipo.numero);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.float_algo)
+            {
+                cadena_traducción += tokenActual.getValorToken();
+
+                tablavalores[cadena_clave] = tokenActual.getValorToken();
+
+                emparejar(TokenC.Tipo.float_algo);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.comillas_simples)
+            {
+                emparejar(TokenC.Tipo.comillas_simples);
+                cadena_traducción += "'" + tokenActual.getValorToken() + "'";
+
+                tablavalores[cadena_clave] = tokenActual.getValorToken();
+
+                emparejar(TokenC.Tipo.caracter);
+                emparejar(TokenC.Tipo.comillas_simples);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.comillas_dobles)
+            {
+                emparejar(TokenC.Tipo.comillas_dobles);
+                cadena_traducción += '"' + tokenActual.getValorToken() + '"';
+
+                tablavalores[cadena_clave] = tokenActual.getValorToken();
+
+                emparejar(TokenC.Tipo.cadena);
+                emparejar(TokenC.Tipo.comillas_dobles);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.un_true)
+            {
+                cadena_traducción += "True";
+
+                tablavalores[cadena_clave] = "True";
+
+                emparejar(TokenC.Tipo.un_true);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.un_false)
+            {
+                cadena_traducción += "False";
+
+                tablavalores[cadena_clave] = "False";
+
+                emparejar(TokenC.Tipo.un_false);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.nombre_algo)
+            {
+                cadena_traducción += tokenActual.getValorToken();
+
+                try
+                {
+                    string valor = tablavalores[tokenActual.getValorToken()];
+                    tablavalores[cadena_clave] = valor;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine(">>>>>>>>>>>>>>>>ALGO PASÓ EN LA TABLA DE SÍMBOLOS<<<<<<<<<<<<<<<<<");
+                }
+
+                emparejar(TokenC.Tipo.nombre_algo);
+            }
+
+            cadena_auxiliar = "";
+            cadena_traducción += "\n";
+            emparejar(TokenC.Tipo.puntoycoma);
+            contenido();
+        }
+        #endregion
+
+        #region console.writeline
+           
+        public void imprimiralgo()
+        {
+            emparejar(TokenC.Tipo.console_writeline);
+            emparejar(TokenC.Tipo.punto);
+            emparejar(TokenC.Tipo.console_writeline);
+            emparejar(TokenC.Tipo.parentesis_abrir);
+
+            cadena_traducción += "print(";
+
+            loquevienedentrodelwriteline();
+
+            cadena_traducción += ")";
+            emparejar(TokenC.Tipo.parentesis_cerrar);
+
+            cadena_auxiliar = "";
+            cadena_traducción += "\n";
+            emparejar(TokenC.Tipo.puntoycoma);
+            contenido();
+        }
+
+        public void loquevienedentrodelwriteline()
+        {
+            if (tokenActual.getTipo() == TokenC.Tipo.comillas_dobles)
+            {
+                emparejar(TokenC.Tipo.comillas_dobles);
+                cadena_traducción += '"';
+                cadena_traducción += tokenActual.getValorToken();
+                cadena_traducción += '"';
+                emparejar(TokenC.Tipo.cadena);
+                emparejar(TokenC.Tipo.comillas_dobles);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.comillas_simples)
+            {
+                emparejar(TokenC.Tipo.comillas_dobles);
+                cadena_traducción += "'";
+                cadena_traducción += tokenActual.getValorToken();
+                cadena_traducción += "'";
+                emparejar(TokenC.Tipo.caracter);
+                emparejar(TokenC.Tipo.comillas_simples);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.nombre_algo)
+            {
+                cadena_traducción += tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.nombre_algo);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.numero)
+            {
+                cadena_traducción += tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.numero);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.float_algo)
+            {
+                cadena_traducción += tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.float_algo);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.un_true)
+            {
+                cadena_traducción += tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.un_true);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.un_false)
+            {
+                cadena_traducción += tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.un_false);
+            }
+
+            otrodentrowriteline();
+
+        }
+
+        public void otrodentrowriteline()
+        {
+            if (tokenActual.getTipo() == TokenC.Tipo.mas)
+            {
+                emparejar(TokenC.Tipo.mas);
+                cadena_traducción += " + ";
+
+                if (tokenActual.getTipo() == TokenC.Tipo.comillas_dobles)
+                {
+                    emparejar(TokenC.Tipo.comillas_dobles);
+                    cadena_traducción += '"';
+                    cadena_traducción += tokenActual.getValorToken();
+                    cadena_traducción += '"';
+                    emparejar(TokenC.Tipo.cadena);
+                    emparejar(TokenC.Tipo.comillas_dobles);
+                }
+                else if (tokenActual.getTipo() == TokenC.Tipo.comillas_simples)
+                {
+                    emparejar(TokenC.Tipo.comillas_dobles);
+                    cadena_traducción += "'";
+                    cadena_traducción += tokenActual.getValorToken();
+                    cadena_traducción += "'";
+                    emparejar(TokenC.Tipo.caracter);
+                    emparejar(TokenC.Tipo.comillas_simples);
+                }
+                else if (tokenActual.getTipo() == TokenC.Tipo.nombre_algo)
+                {
+                    cadena_traducción += tokenActual.getValorToken();
+                    emparejar(TokenC.Tipo.nombre_algo);
+                }
+                else if (tokenActual.getTipo() == TokenC.Tipo.numero)
+                {
+                    cadena_traducción += tokenActual.getValorToken();
+                    emparejar(TokenC.Tipo.numero);
+                }
+                else if (tokenActual.getTipo() == TokenC.Tipo.float_algo)
+                {
+                    cadena_traducción += tokenActual.getValorToken();
+                    emparejar(TokenC.Tipo.float_algo);
+                }
+                else if (tokenActual.getTipo() == TokenC.Tipo.un_true)
+                {
+                    cadena_traducción += tokenActual.getValorToken();
+                    emparejar(TokenC.Tipo.un_true);
+                }
+                else if (tokenActual.getTipo() == TokenC.Tipo.un_false)
+                {
+                    cadena_traducción += tokenActual.getValorToken();
+                    emparejar(TokenC.Tipo.un_false);
+                }
+
+
+
+                otrodentrowriteline();
+            }
+        }
+        #endregion
+
+        #region if-else
+
+        public void sentenciaif()
+        {
+
+        }
+
+        #endregion
+
+
+        // ESTO SE HACE O SE HACE
+        #region asignación con mate
+        #endregion
+
+
+        #region VOIDS DE BACKEND 
 
         public void emparejar(TokenC.Tipo tip)
         {
+            Console.WriteLine("Matcheando con: " + tip + " \t\t\t " + tokenActual.getTipo());
             if (tokenActual.getTipo() != tip)
             {
                 Console.WriteLine("Error se esperaba " + getTipodeError(tip) + " :C");
-            }            
+            }
             if (tokenActual.getTipo() != TokenC.Tipo.ultimo)
             {
                 controlToken += 1;
@@ -320,5 +717,15 @@ namespace Proyecto2
                     return "desconocido";
             }
         }
+        public void parsear(LinkedList<TokenC> tokens)
+        {
+            this.listaTokens = tokens;
+            controlToken = 0;
+            tokenActual = listaTokens.ElementAt(controlToken);
+            clase();
+        }
+
+        #endregion
+
     }
 }
