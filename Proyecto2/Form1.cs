@@ -17,8 +17,9 @@ namespace Proyecto2
     {
 
         public String rutaa;
-        public String mihtml = "";
+        public String mihtml = "", al_inicio = "", al_final = "", mitabladevalores ="";
         public Boolean Docabierto = false, analizado = false;
+        StringBuilder rutapython = new StringBuilder();
 
         String path;
         int contaerrores = 0;
@@ -79,6 +80,7 @@ namespace Proyecto2
             if (abrir.ShowDialog() == DialogResult.OK)
             {
                 rutaa = abrir.FileName;
+                rutapython.Append(rutaa);
                 Console.WriteLine("Su archivo es: " + rutaa);
                 String mitexto = File.ReadAllText(rutaa, Encoding.UTF8);
 
@@ -97,12 +99,50 @@ namespace Proyecto2
             Console.WriteLine("CARGAR ARCHIVO");
             buscarArchivo();
 
+            al_inicio = fastColoredTextBox1.Text;
+
 
         }
 
         private void AbrirToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Close();
+            al_final = fastColoredTextBox1.Text;
+
+            if (al_inicio.Equals(al_final))
+            {
+                this.Close();
+            }
+            else
+            {
+                DialogResult dialogResult = MessageBox.Show("Quieres guardar los cambios?", "Atención!", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    Console.WriteLine("GUARDAR ARCHIVO");
+
+
+                    SaveFileDialog dondeguardo = new SaveFileDialog();
+                    dondeguardo.Filter = "Text FIle|*.CS";
+                    if (dondeguardo.ShowDialog() == DialogResult.OK)
+                    {
+                        String midocumento;
+                        midocumento = fastColoredTextBox1.Text;
+                        path = dondeguardo.FileName;
+
+                        BinaryWriter bw = new BinaryWriter(File.Create(path));
+                        bw.Write(midocumento);
+                        bw.Dispose();
+                        Docabierto = true;
+
+                    }
+
+                    this.Close();
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    this.Close();
+                }
+            }
+
         }
 
         private void LimpiarEspacioToolStripMenuItem_Click(object sender, EventArgs e)
@@ -133,43 +173,137 @@ namespace Proyecto2
 
         private void hacerlamagia()
         {
+            fastColoredTextBox2.Text = "";
+            richTextBox3.Text = "";
+
+
             analizado = true;
             entrada = fastColoredTextBox1.Text;
             Console.WriteLine("\n\nINICIANDO EL ANALIZADOR LÉXICO\n\n");
             AnalizadorLéxico funcionaxfa = new AnalizadorLéxico();
             LinkedList<TokenC> listanueva = funcionaxfa.escanear(entrada);
             funcionaxfa.imprimirListaTokens(listanueva);
-            crearHTML(funcionaxfa);
 
-            if (funcionaxfa.ListaDeErrores.Count > 1)
+            Console.WriteLine("\n\nINICIANDO ANALIZADOR SINTÁCTICO \n\n");
+            listanueva.AddLast(new TokenC(TokenC.Tipo.ultimo, "ultimo"));
+            AnalizadorSintáctico awadeuwu = new AnalizadorSintáctico();
+            awadeuwu.parsear(listanueva);
+            Console.WriteLine("Ya terminó de analizar");
+
+            //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            crearHTML(funcionaxfa, awadeuwu);
+
+            if (funcionaxfa.ListaDeErrores.Count > 0 || awadeuwu.ListaDeErrores.Count > 0)
             {
-                guardarHTML(mihtml);
+                //guardarHTML(mihtml);
+            }
+            else
+            {
+                fastColoredTextBox2.Text = awadeuwu.cadena_traducción;
+                //crearPython(awadeuwu.cadena_traducción);
             }
 
-            /*Console.WriteLine("\n\nINICIANDO ANALIZADOR SINTÁCTICO \n\n");
-              listanueva.AddLast(new TokenC(TokenC.Tipo.ultimo, "ultimo"));
-              AnalizadorSintáctico awadeuwu = new AnalizadorSintáctico();
-              awadeuwu.parsear(listanueva);
-              Console.WriteLine("Ya terminó de analizar");
 
-              fastColoredTextBox2.Text = awadeuwu.cadena_traducción;
+            Console.WriteLine("\n\nTABLA DE VALORES\n\n");
 
-             Console.WriteLine("\n\nTABLA DE VALORES\n\n");
-             foreach (KeyValuePair<string, string> kvp in awadeuwu.tablavalores)
-             {
-                 Console.WriteLine("Key = {0}, Value = {1}",
-                                   kvp.Key, kvp.Value);
-             }
 
-             Console.WriteLine("\n\nTABLA DE TIPOS\n\n");
-             foreach (KeyValuePair<string, string> kvp in awadeuwu.tablatipos)
-             {
-                 Console.WriteLine("Key = {0}, Value = {1}",
-                                   kvp.Key, kvp.Value);
-             }*/
+            crearTablaValores(awadeuwu);
+
+
+            foreach (KeyValuePair<string, string> kvp in awadeuwu.tablavalores)
+            {
+                Console.WriteLine("Key = {0}, Value = {1}",
+                                  kvp.Key, kvp.Value);
+            }
+
+            Console.WriteLine("\n\nTABLA DE TIPOS\n\n");
+            foreach (KeyValuePair<string, string> kvp in awadeuwu.tablatipos)
+            {
+                Console.WriteLine("Key = {0}, Value = {1}",
+                                  kvp.Key, kvp.Value);
+            }
         }
-        private void crearHTML(AnalizadorLéxico analizador)
+
+
+        private void crearPython(String cadena_traduccion)
         {
+                try
+                {
+                    string subpython = ".py";
+                    string subcs = ".cs";
+
+                rutapython.Length -= subcs.Length;
+                rutapython.Append(subpython);
+
+                Console.WriteLine(rutapython.ToString());
+                 
+                    BinaryWriter bw = new BinaryWriter(File.Create(rutapython.ToString()));
+                    bw.Write(cadena_traduccion);
+                    bw.Dispose();
+                    Console.WriteLine("Tu archivo ha sido creado <3");
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Algo malo ha ocurrido </3");
+                    throw;
+                }
+                        
+        }
+        private void crearTablaValores(AnalizadorSintáctico awadeuwu)
+        {
+            string shortDateString = DateTime.Now.ToShortDateString();
+            String hourMinute = DateTime.Now.ToString("HH:mm");
+
+            mitabladevalores = "<!DOCTYPE HTML>" +
+                "<html>" +
+                    "<head>" +
+                        "<title>Mis Tokens</title>" +
+                        "<meta charset=\"utf8\">" +
+                "</head>" +
+                "<body><h1>Tabla de Valores</h1>" +
+                "<p>Reportes tomadosd del archivo de entrada" + rutaa + "</p>" +
+                "<p>Tomados de la fecha: " + shortDateString + " " + hourMinute + "</p>";
+            mitabladevalores = mitabladevalores + "<table border=\"1\">"
+        + "<thead>"
+        + "<tr><th><strong>Variable</strong></th>"
+        + "<th><strong>Contenido</strong></th></thead>"
+        + "<tbody>";
+
+            try
+            {
+                foreach (KeyValuePair<string, string> kvp in awadeuwu.tablavalores)
+                {
+
+                    mitabladevalores = mitabladevalores
+                         + "<tr><td>" + kvp.Key + "</td>"
+                         + "<td>" + kvp.Value + "</td>"
+                         + " </tr>";
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            mitabladevalores = mitabladevalores + "</tbody></table></div><br><br><br>";
+
+            mitabladevalores = mitabladevalores + "</body></html>";
+
+        }
+        private void crearHTML(AnalizadorLéxico analizador, AnalizadorSintáctico analizador2)
+        {
+            string shortDateString = DateTime.Now.ToShortDateString();
+            String hourMinute = DateTime.Now.ToString("HH:mm");
+
+            string subpython = ".py";
+            string subcs = ".cs";
+            if (rutapython.Length > 0)
+            {
+                rutapython.Length -= subcs.Length;
+            }            
+            rutapython.Append(subpython);
+
             mihtml = "<!DOCTYPE HTML>" +
                 "<html>" +
                     "<head>" +
@@ -177,7 +311,9 @@ namespace Proyecto2
                         "<meta charset=\"utf8\">" +
                 "</head>" +
                 "<body><h1>Reporte de Análisis</h1>" +
-                "<p>Reportes tomadosd del archivo de entrada" + rutaa + "</p>" +
+                "<p>Reportes tomados del archivo de entrada" + rutaa + "</p>" +
+                "<p> Posible salida hacia la ruta: " + rutapython.ToString() +
+                "<p>Tomados de la fecha: " + shortDateString + " " + hourMinute + "</p>" +
                 "<h2>Lista de Tokens Aprobados</h2>";
 
 
@@ -225,9 +361,9 @@ namespace Proyecto2
 
             mihtml = mihtml + "</tbody></table></div><br><br><br>";
 
-            // aquí empiezan los errores
+            // aquí empiezan los errores léxicos
 
-            mihtml = mihtml + "<h2>Lista de Errores</h2>";
+            mihtml = mihtml + "<h2>Lista de Errores Léxicos</h2>";
             mihtml = mihtml + "<table border=\"1\">"
              + "<thead>"
              + "<tr><th><strong>#</strong></th>"
@@ -270,6 +406,51 @@ namespace Proyecto2
             }
 
             mihtml = mihtml + "</tbody></table></div><br><br><br>";
+
+            // aquí empiezan los errores sintácticos
+
+            mihtml = mihtml + "<h2>Lista de Errores Sintácticos</h2>";
+            mihtml = mihtml + "<table border=\"1\">"
+             + "<thead>"
+             + "<tr><th><strong>#</strong></th>"
+             + "<th><strong>Tipo de Token</strong></th>"
+             + "<th><strong>Tipo esperado</strong></th>"
+             + "<th><strong>Token</strong></th>"
+             + "<tbody>";
+
+            try
+            {
+                //int contador = 0;
+
+                Console.WriteLine("Imprimiendo Errores Sintácticos");
+                Console.WriteLine(analizador2.ListaDeErrores.ToString());
+                Console.WriteLine("El tamaño de la lista es: " + analizador2.ListaDeErrores.Count());
+
+
+                ErrorSintáctico[] lista_errores2 = new ErrorSintáctico[analizador2.ListaDeErrores.Count()];
+                analizador2.ListaDeErrores.CopyTo(lista_errores2, 0);
+
+                for (int i = 0; i < lista_errores2.Length; i++)
+                {
+
+                    mihtml = mihtml
+                          + "<tr><td>" + lista_errores2[i].getnumero() + "</td>"
+                          + "<td>" + lista_errores2[i].getTipoquevenia() + "</td>"
+                          + "<td>" + lista_errores2[i].getTipoquequería() + "</td>"
+                          + "<td>" + lista_errores2[i].getContenidoToken() + "</td>"
+                          + " </tr>";
+                    //contador++;
+
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            mihtml = mihtml + "</tbody></table></div><br><br><br>";
+
             mihtml = mihtml + "</body></html>";
         }
 
@@ -303,9 +484,14 @@ namespace Proyecto2
             }
         }
 
+        private void tablaDeSímbolosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            guardarHTML(mitabladevalores);
+        }
+
         private void GenerarReportesToolStripMenuItem_Click(object sender, EventArgs e)
-        {            
-            
+        {
+
         }
 
         private void tablaDeTokensToolStripMenuItem_Click(object sender, EventArgs e)

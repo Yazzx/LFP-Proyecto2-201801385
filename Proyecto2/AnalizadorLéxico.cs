@@ -102,6 +102,16 @@ namespace Proyecto2
                             prabierta = true;
                             agregarToken(TokenC.Tipo.dospuntos);
                         }
+                        else if (c.CompareTo('*') == 0)
+                        {
+                            auxlex += c;
+                            ObjToken o1 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 3, "por");
+                            ListaTokens.AddLast(o1);
+                            contatoken++;
+                            contacolumna++;
+                            prabierta = true;
+                            agregarToken(TokenC.Tipo.por);
+                        }
                         else if (c.CompareTo('>') == 0)
                         {
                             estado = 19;

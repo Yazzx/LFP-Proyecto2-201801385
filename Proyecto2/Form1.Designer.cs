@@ -298,6 +298,7 @@
             this.tablaDeSímbolosToolStripMenuItem.Name = "tablaDeSímbolosToolStripMenuItem";
             this.tablaDeSímbolosToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
             this.tablaDeSímbolosToolStripMenuItem.Text = "Tabla de Símbolos";
+            this.tablaDeSímbolosToolStripMenuItem.Click += new System.EventHandler(this.tablaDeSímbolosToolStripMenuItem_Click);
             // 
             // tablaDeErroresToolStripMenuItem
             // 
