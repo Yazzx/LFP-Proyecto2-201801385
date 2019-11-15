@@ -49,6 +49,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.fastColoredTextBox1 = new FastColoredTextBoxNS.FastColoredTextBox();
             this.fastColoredTextBox2 = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.tablaDeTokensToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tablaDeSímbolosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tablaDeErroresToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fastColoredTextBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fastColoredTextBox2)).BeginInit();
@@ -119,6 +122,10 @@
             // 
             // generarReportesToolStripMenuItem
             // 
+            this.generarReportesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tablaDeTokensToolStripMenuItem,
+            this.tablaDeSímbolosToolStripMenuItem,
+            this.tablaDeErroresToolStripMenuItem});
             this.generarReportesToolStripMenuItem.Name = "generarReportesToolStripMenuItem";
             this.generarReportesToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.generarReportesToolStripMenuItem.Text = "Generar Reportes";
@@ -233,7 +240,6 @@
             this.fastColoredTextBox1.CharWidth = 8;
             this.fastColoredTextBox1.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.fastColoredTextBox1.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.fastColoredTextBox1.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.fastColoredTextBox1.IsReplaceMode = false;
             this.fastColoredTextBox1.Language = FastColoredTextBoxNS.Language.CSharp;
             this.fastColoredTextBox1.LeftBracket = '(';
@@ -268,7 +274,6 @@
             this.fastColoredTextBox2.CharWidth = 8;
             this.fastColoredTextBox2.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.fastColoredTextBox2.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.fastColoredTextBox2.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.fastColoredTextBox2.IsReplaceMode = false;
             this.fastColoredTextBox2.Location = new System.Drawing.Point(418, 60);
             this.fastColoredTextBox2.Name = "fastColoredTextBox2";
@@ -280,6 +285,26 @@
             this.fastColoredTextBox2.Text = "#TEXTO EN PYTHON";
             this.fastColoredTextBox2.Zoom = 100;
             this.fastColoredTextBox2.Load += new System.EventHandler(this.fastColoredTextBox2_Load);
+            // 
+            // tablaDeTokensToolStripMenuItem
+            // 
+            this.tablaDeTokensToolStripMenuItem.Name = "tablaDeTokensToolStripMenuItem";
+            this.tablaDeTokensToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
+            this.tablaDeTokensToolStripMenuItem.Text = "Tabla de Tokens";
+            this.tablaDeTokensToolStripMenuItem.Click += new System.EventHandler(this.tablaDeTokensToolStripMenuItem_Click);
+            // 
+            // tablaDeSímbolosToolStripMenuItem
+            // 
+            this.tablaDeSímbolosToolStripMenuItem.Name = "tablaDeSímbolosToolStripMenuItem";
+            this.tablaDeSímbolosToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
+            this.tablaDeSímbolosToolStripMenuItem.Text = "Tabla de Símbolos";
+            // 
+            // tablaDeErroresToolStripMenuItem
+            // 
+            this.tablaDeErroresToolStripMenuItem.Name = "tablaDeErroresToolStripMenuItem";
+            this.tablaDeErroresToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
+            this.tablaDeErroresToolStripMenuItem.Text = "Tabla de Errores";
+            this.tablaDeErroresToolStripMenuItem.Click += new System.EventHandler(this.tablaDeErroresToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -330,6 +355,9 @@
         private System.Windows.Forms.ToolStripMenuItem abrirToolStripMenuItem;
         private FastColoredTextBoxNS.FastColoredTextBox fastColoredTextBox1;
         private FastColoredTextBoxNS.FastColoredTextBox fastColoredTextBox2;
+        private System.Windows.Forms.ToolStripMenuItem tablaDeTokensToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tablaDeSímbolosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tablaDeErroresToolStripMenuItem;
     }
 }
 

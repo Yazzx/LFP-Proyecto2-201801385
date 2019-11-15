@@ -12,7 +12,8 @@ namespace Proyecto2
         int controlToken;
         TokenC tokenActual;
         LinkedList<TokenC> listaTokens;
-        public String cadena_traducción = "", cadena_auxiliar, cadena_clave, tab;
+        public String cadena_traducción = "", cadena_auxiliar, cadena_clave, tab = "\t", cadena_switch;
+        StringBuilder mistabs = new StringBuilder();
         public Dictionary<string, string> tablavalores = new Dictionary<string, string>();
         public Dictionary<string, string> tablatipos = new Dictionary<string, string>();
 
@@ -23,8 +24,9 @@ namespace Proyecto2
         Boolean eschar = false;
         Boolean esstring = false;
         Boolean esbool = false, esarray = false;
+        Boolean esprimero = true;
 
-       
+
         public void clase()
         {
             emparejar(TokenC.Tipo.PR_CLASS);
@@ -50,34 +52,36 @@ namespace Proyecto2
         }
         public void contenido()
         {
-            if (hayerror)
+            if (tokenActual.getTipo() == TokenC.Tipo.pr_int || tokenActual.getTipo() == TokenC.Tipo.pr_float
+            || tokenActual.getTipo() == TokenC.Tipo.pr_string || tokenActual.getTipo() == TokenC.Tipo.pr_bool
+            || tokenActual.getTipo() == TokenC.Tipo.pr_char)
             {
-
+                declaracionVariables();
             }
-            else
+
+            if (tokenActual.getTipo() == TokenC.Tipo.nombre_algo)
             {
-                if (tokenActual.getTipo() == TokenC.Tipo.pr_int || tokenActual.getTipo() == TokenC.Tipo.pr_float
-                || tokenActual.getTipo() == TokenC.Tipo.pr_string || tokenActual.getTipo() == TokenC.Tipo.pr_bool
-                || tokenActual.getTipo() == TokenC.Tipo.pr_char)
-                {
-                    declaracionVariables();
-                }
-
-                if (tokenActual.getTipo() == TokenC.Tipo.nombre_algo)
-                {
-                    asignacionalopela();
-                }
-
-                if (tokenActual.getTipo() == TokenC.Tipo.console_writeline)
-                {
-                    imprimiralgo();
-                }
-
-                if (tokenActual.getTipo() == TokenC.Tipo.un_if)
-                {
-                    sentenciaif();
-                }
+                asignacionalopela();
             }
+
+            if (tokenActual.getTipo() == TokenC.Tipo.console_writeline)
+            {
+                imprimiralgo();
+            }
+
+            if (tokenActual.getTipo() == TokenC.Tipo.un_if)
+            {
+                sentenciaif();
+            }
+            if (tokenActual.getTipo() == TokenC.Tipo.un_switch)
+            {
+                sentenciaswitch();
+            }
+            if (tokenActual.getTipo() == TokenC.Tipo.un_for)
+            {
+                sentenciafor();
+            }
+
 
         }
 
@@ -128,6 +132,7 @@ namespace Proyecto2
 
             }
 
+            cadena_clave = "";
             cadena_auxiliar = "";
             cadena_auxiliar += tokenActual.getValorToken();
             cadena_clave += tokenActual.getValorToken();
@@ -143,9 +148,9 @@ namespace Proyecto2
             {
 
                 MessageBox.Show("Hay dos variables con el mismo nombre:  " +
-                         "= \""+ cadena_clave + "\" !! :C", "Error Sintáctico");
+                         "= \"" + cadena_clave + "\" !! :C", "Error Sintáctico");
             }
-            
+
 
             emparejar(TokenC.Tipo.nombre_algo);
 
@@ -153,7 +158,7 @@ namespace Proyecto2
             if (tokenActual.getTipo() == TokenC.Tipo.igual)
             {
                 emparejar(TokenC.Tipo.igual);
-                cadena_traducción += tab + cadena_auxiliar + " = ";
+                cadena_traducción += mistabs + cadena_auxiliar + " = ";
 
                 // si el igual es de un array
                 if (esarray)
@@ -260,7 +265,7 @@ namespace Proyecto2
                 cadena_traducción += tokenActual.getValorToken();
 
                 tablatipos[cadena_clave] = "char";
-                tablavalores[cadena_clave] = "'" + tokenActual.getValorToken() + "'" ;
+                tablavalores[cadena_clave] = "'" + tokenActual.getValorToken() + "'";
 
                 emparejar(TokenC.Tipo.caracter);
                 cadena_traducción += tokenActual.getValorToken();
@@ -319,6 +324,7 @@ namespace Proyecto2
                 else
                 {
                     cadena_auxiliar = "";
+                    cadena_clave = "";
                     cadena_clave = tokenActual.getValorToken();
                     cadena_auxiliar += tokenActual.getValorToken();
 
@@ -341,7 +347,7 @@ namespace Proyecto2
 
                 if (tokenActual.getTipo() == TokenC.Tipo.igual)
                 {
-                    cadena_traducción += "\n" + tab;
+                    cadena_traducción += "\n" + mistabs;
                     emparejar(TokenC.Tipo.igual);
                     cadena_traducción += cadena_auxiliar + " = ";
                     asignación();
@@ -362,16 +368,16 @@ namespace Proyecto2
             cadena_auxiliar = "";
             cadena_auxiliar += tokenActual.getValorToken();
             cadena_clave = "";
-            cadena_clave = tab + tokenActual.getValorToken();
+            cadena_clave = tokenActual.getValorToken();
             emparejar(TokenC.Tipo.nombre_algo);
 
             emparejar(TokenC.Tipo.igual);
-            cadena_traducción += tab + cadena_auxiliar + " = ";
+            cadena_traducción += mistabs + cadena_auxiliar + " = ";
 
             if (tokenActual.getTipo() == TokenC.Tipo.numero)
             {
                 cadena_traducción += tokenActual.getValorToken();
-                
+
                 tablavalores[cadena_clave] = tokenActual.getValorToken();
 
                 emparejar(TokenC.Tipo.numero);
@@ -445,7 +451,7 @@ namespace Proyecto2
         #endregion
 
         #region console.writeline
-           
+
         public void imprimiralgo()
         {
             emparejar(TokenC.Tipo.console_writeline);
@@ -453,7 +459,7 @@ namespace Proyecto2
             emparejar(TokenC.Tipo.console_writeline);
             emparejar(TokenC.Tipo.parentesis_abrir);
 
-            cadena_traducción += tab + "print(";
+            cadena_traducción += mistabs + "print(";
 
             loquevienedentrodelwriteline();
 
@@ -582,7 +588,7 @@ namespace Proyecto2
             {
                 cadena_auxiliar = "";
                 emparejar(TokenC.Tipo.un_if);
-                cadena_traducción += tab + "if ";
+                cadena_traducción += mistabs + "if ";
                 emparejar(TokenC.Tipo.parentesis_abrir);
 
                 comparacion();
@@ -592,34 +598,211 @@ namespace Proyecto2
                 emparejar(TokenC.Tipo.llave_abrir);
                 cadena_traducción += "\n";
 
-                tab += "\t";
-
-                sentenciaif();
+                mistabs.Append(tab);
+                //sentenciaif();
                 contenido();
 
                 emparejar(TokenC.Tipo.llave_cerrar);
-                tab = "";
+
+
+                mistabs.Length -= tab.Length;
 
                 sentenciaelse();
                 contenido();
+
+
             }
         }
 
         public void comparacion()
         {
+            cosita();
+            operador();
+            cosita();
+        }
+        public void cosita()
+        {
+            if (tokenActual.getTipo() == TokenC.Tipo.nombre_algo)
+            {
+                cadena_traducción += tokenActual.getValorToken() + " ";
+                emparejar(TokenC.Tipo.nombre_algo);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.numero)
+            {
+                cadena_traducción += tokenActual.getValorToken() + " ";
+                emparejar(TokenC.Tipo.numero);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.float_algo)
+            {
+                cadena_traducción += tokenActual.getValorToken() + " ";
+                emparejar(TokenC.Tipo.float_algo);
+            }
+            else
+            {
+                MessageBox.Show("Tiene que venir un caracter antes del operador en tu if :C", "Error Sintáctico");
+            }
+        }
 
-
+        public void operador()
+        {
+            if (tokenActual.getTipo() == TokenC.Tipo.mayor_que)
+            {
+                cadena_traducción += tokenActual.getValorToken() + " ";
+                emparejar(TokenC.Tipo.mayor_que);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.menor_que)
+            {
+                cadena_traducción += tokenActual.getValorToken() + " ";
+                emparejar(TokenC.Tipo.menor_que);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.igualigual)
+            {
+                cadena_traducción += tokenActual.getValorToken() + " ";
+                emparejar(TokenC.Tipo.igualigual);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.diferente_que)
+            {
+                cadena_traducción += tokenActual.getValorToken() + " ";
+                emparejar(TokenC.Tipo.diferente_que);
+            }
+            else
+            {
+                MessageBox.Show("Tiene que haber un operador entre números :c ", "Error Sintáctico");
+            }
         }
         public void sentenciaelse()
         {
 
             if (tokenActual.getTipo() == TokenC.Tipo.un_else)
             {
+                cadena_traducción += mistabs + "else: ";
                 emparejar(TokenC.Tipo.un_else);
-                tab = "/t";
+                emparejar(TokenC.Tipo.llave_abrir);
+                cadena_traducción += "\n";
+
+                mistabs.Append(tab);
+                contenido();
+
+                emparejar(TokenC.Tipo.llave_cerrar);
+
+
+                mistabs.Length -= tab.Length;
+
+                sentenciaelse();
                 contenido();
             }
+
+        }
+
+        #endregion
+
+        #region switch-case
+
+        public void sentenciaswitch()
+        {
+            if (tokenActual.getTipo() == TokenC.Tipo.un_switch)
+            {
+                emparejar(TokenC.Tipo.un_switch);
+                emparejar(TokenC.Tipo.parentesis_abrir);
+                cadena_auxiliar = tokenActual.getValorToken();
+                cadena_switch = tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.nombre_algo);
+                emparejar(TokenC.Tipo.parentesis_cerrar);
+                emparejar(TokenC.Tipo.llave_abrir);
+
+                casosycosas();
+
+                emparejar(TokenC.Tipo.llave_cerrar);
+            }
+        }
+
+        public void casosycosas()
+        {
             
+
+            if (esprimero)
+            {
+                esprimero = false;
+                if (tokenActual.getTipo() == TokenC.Tipo.un_case)
+                {
+                    emparejar(TokenC.Tipo.un_case);
+
+                    cadena_traducción += "if " + cadena_switch + " == " + tokenActual.getValorToken() + ":\n";
+                    emparejar(TokenC.Tipo.numero);
+                    emparejar(TokenC.Tipo.dospuntos);
+
+                    mistabs.Append(tab);
+                    //sentenciaif();
+                    contenido();
+
+                    emparejar(TokenC.Tipo.un_break);
+                    emparejar(TokenC.Tipo.puntoycoma);
+                    mistabs.Length -= tab.Length;
+                    casosycosas();
+                }
+            }
+            else
+            {
+                if (tokenActual.getTipo() == TokenC.Tipo.un_case)
+                {
+                    emparejar(TokenC.Tipo.un_case);
+
+                    cadena_traducción += "elif " + cadena_switch + " == " + tokenActual.getValorToken() + ":";
+                    emparejar(TokenC.Tipo.numero);
+                    emparejar(TokenC.Tipo.dospuntos);
+
+                    mistabs.Append(tab);
+                    //sentenciaif();
+                    contenido();
+
+                    emparejar(TokenC.Tipo.un_break);
+                    emparejar(TokenC.Tipo.puntoycoma);
+                    mistabs.Length -= tab.Length;
+                    casosycosas();
+                }
+            }
+
+            if (tokenActual.getTipo() == TokenC.Tipo.pr_default)
+            {
+                emparejar(TokenC.Tipo.pr_default);
+                cadena_traducción += "else:\n";
+                emparejar(TokenC.Tipo.dospuntos);
+
+                mistabs.Append(tab);
+                //sentenciaif();
+                contenido();
+
+                emparejar(TokenC.Tipo.un_break);
+                emparejar(TokenC.Tipo.puntoycoma);
+                cadena_switch = "";
+                casosycosas();
+
+            }
+        }
+
+        #endregion
+
+        #region for
+
+        public void sentenciafor()
+        {
+            if (tokenActual.getTipo() == TokenC.Tipo.un_for)
+            {
+                emparejar(TokenC.Tipo.un_for);
+                emparejar(TokenC.Tipo.parentesis_abrir);
+                emparejar(TokenC.Tipo.pr_int);
+
+                declaracionVariables();
+
+                emparejar(TokenC.Tipo.nombre_algo);
+
+                operador();
+
+
+
+
+
+            }
         }
 
         #endregion

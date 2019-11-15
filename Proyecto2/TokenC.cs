@@ -75,9 +75,11 @@ namespace Proyecto2
             cuerpo_comml,
             pr_main,
             punto,
+            dospuntos,
+            pr_default,
 
             // sintáctico
-            ultimo,
+            ultimo
 
             // tipo general
             
@@ -222,6 +224,10 @@ namespace Proyecto2
                     return "punto";
                 case Tipo.pr_main:
                     return "pr_main";
+                case Tipo.dospuntos:
+                    return "dospuntos";
+                case Tipo.pr_default:
+                    return "pr_default";
                 case Tipo.ultimo:
                     return "ya el último :3";
                 default:
