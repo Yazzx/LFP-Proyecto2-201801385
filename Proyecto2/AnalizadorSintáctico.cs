@@ -28,7 +28,7 @@ namespace Proyecto2
         Boolean eschar = false;
         Boolean esstring = false;
         Boolean esbool = false, esarray = false;
-        Boolean esprimero = true;
+        Boolean esprimero = true, enfor = false;
 
 
         public void clase()
@@ -67,6 +67,10 @@ namespace Proyecto2
             {
                 asignacionalopela();
             }
+            if (tokenActual.getTipo() == TokenC.Tipo.graficar)
+            {
+                graficarverctorr();
+            }
 
             if (tokenActual.getTipo() == TokenC.Tipo.console_writeline)
             {
@@ -83,12 +87,72 @@ namespace Proyecto2
             }
             if (tokenActual.getTipo() == TokenC.Tipo.un_for)
             {
-                //sentenciafor();
+                sentenciafor();
+            }
+            if (tokenActual.getTipo() == TokenC.Tipo.un_while)
+            {
+                sentenciawhile();
+            }
+            if (tokenActual.getTipo() == TokenC.Tipo.comentario_unalinea)
+            {
+                comentariouna();
+            }
+            if (tokenActual.getTipo() == TokenC.Tipo.cmultilinea_abrir)
+            {
+                comentariomuchas();
             }
 
 
         }
 
+        public void graficarverctorr()
+        {
+            if (tokenActual.getTipo() == TokenC.Tipo.graficar)
+            {
+                emparejar(TokenC.Tipo.graficar);
+                emparejar(TokenC.Tipo.parentesis_abrir);
+                cadena_traducción += mistabs + "graficar(" + tokenActual.getValorToken() + ",";
+                emparejar(TokenC.Tipo.nombre_algo);
+                emparejar(TokenC.Tipo.coma);
+                emparejar(TokenC.Tipo.comillas_dobles);
+                cadena_traducción += "\"" + tokenActual.getValorToken() + "\")\n";
+                emparejar(TokenC.Tipo.cadena);
+                emparejar(TokenC.Tipo.comillas_dobles);
+                emparejar(TokenC.Tipo.parentesis_cerrar);
+                emparejar(TokenC.Tipo.puntoycoma);
+
+                
+
+                contenido();
+            }
+
+        }
+
+        #region Comentarios
+
+        public void comentariomuchas()
+        {
+            if (tokenActual.getTipo() == TokenC.Tipo.cmultilinea_abrir)
+            {
+                emparejar(TokenC.Tipo.cmultilinea_abrir);
+                cadena_traducción += mistabs + "'''\n" + tokenActual.getValorToken() + "\n'''\n";
+                emparejar(TokenC.Tipo.cuerpo_comml);
+                emparejar(TokenC.Tipo.cmultilinea_cerrar);
+                contenido();
+            }
+        }
+        public void comentariouna()
+        {
+            if (tokenActual.getTipo() == TokenC.Tipo.comentario_unalinea)
+            {
+                emparejar(TokenC.Tipo.comentario_unalinea);
+                cadena_traducción += mistabs + "#" + tokenActual.getValorToken();
+                emparejar(TokenC.Tipo.cuerpo_com1l);
+                contenido();
+            }
+            
+        }
+        #endregion
         #region declaracion y asignacion con palabra reservada
         public void declaracionVariables()
         {
@@ -151,8 +215,8 @@ namespace Proyecto2
             catch (ArgumentException)
             {
 
-                MessageBox.Show("Hay dos variables con el mismo nombre:  " +
-                         "= \"" + cadena_clave + "\" !! :C", "Error Sintáctico");
+                //MessageBox.Show("Hay dos variables con el mismo nombre:  " +
+                       //  "= \"" + cadena_clave + "\" !! :C", "Error Sintáctico");
             }
 
 
@@ -398,11 +462,10 @@ namespace Proyecto2
             }
             else if (tokenActual.getTipo() == TokenC.Tipo.float_algo)
             {
-                cadena_traducción += tokenActual.getValorToken();
-
+                cadena_operacion = "";
+                E();
                 tablavalores[cadena_clave] = tokenActual.getValorToken();
 
-                emparejar(TokenC.Tipo.float_algo);
             }
             else if (tokenActual.getTipo() == TokenC.Tipo.comillas_simples)
             {
@@ -423,6 +486,7 @@ namespace Proyecto2
 
                 emparejar(TokenC.Tipo.cadena);
                 emparejar(TokenC.Tipo.comillas_dobles);
+                otrodentrowriteline();
             }
             else if (tokenActual.getTipo() == TokenC.Tipo.un_true)
             {
@@ -529,9 +593,18 @@ namespace Proyecto2
             }
             else
             {
-                cadena_traducción += tokenActual.getValorToken();
-                cadena_operacion += tokenActual.getValorToken();
-                emparejar(TokenC.Tipo.numero);
+                if (tokenActual.getTipo() == TokenC.Tipo.numero)
+                {
+                    cadena_traducción += tokenActual.getValorToken();
+                    cadena_operacion += tokenActual.getValorToken();
+                    emparejar(TokenC.Tipo.numero);
+                } else
+                {
+                    cadena_traducción += tokenActual.getValorToken();
+                    cadena_operacion += tokenActual.getValorToken();
+                    emparejar(TokenC.Tipo.float_algo);
+                }
+                
                 
             }
         }
@@ -656,10 +729,19 @@ namespace Proyecto2
                 }
                 else if (tokenActual.getTipo() == TokenC.Tipo.nombre_algo)
                 {
-                    cadena_traducción += tokenActual.getValorToken();
-                    string cosa = tablavalores[tokenActual.getValorToken()];
-                    cadena_consola += cosa;
-                    emparejar(TokenC.Tipo.nombre_algo);
+                    try
+                    {
+                        cadena_traducción += tokenActual.getValorToken();
+                        string cosa = tablavalores[tokenActual.getValorToken()];
+                        cadena_consola += cosa;
+                        emparejar(TokenC.Tipo.nombre_algo);
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                    
                 }
                 else if (tokenActual.getTipo() == TokenC.Tipo.numero)
                 {
@@ -752,7 +834,7 @@ namespace Proyecto2
             }
             else
             {
-                MessageBox.Show("Tiene que venir un caracter antes del operador en tu if :C", "Error Sintáctico");
+                //MessageBox.Show("Tiene que venir un caracter antes del operador en tu if :C", "Error Sintáctico");
             }
         }
 
@@ -760,27 +842,79 @@ namespace Proyecto2
         {
             if (tokenActual.getTipo() == TokenC.Tipo.mayor_que)
             {
-                cadena_traducción += tokenActual.getValorToken() + " ";
+                if (enfor)
+                {
+
+                }
+                else
+                {
+                    cadena_traducción += tokenActual.getValorToken() + " ";
+                }                
                 emparejar(TokenC.Tipo.mayor_que);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.mayor_igual)
+            {
+                if (enfor)
+                {
+
+                }
+                else
+                {
+                    cadena_traducción += tokenActual.getValorToken() + " ";
+                }
+                emparejar(TokenC.Tipo.mayor_igual);
             }
             else if (tokenActual.getTipo() == TokenC.Tipo.menor_que)
             {
-                cadena_traducción += tokenActual.getValorToken() + " ";
+                if (enfor)
+                {
+
+                }
+                else
+                {
+                    cadena_traducción += tokenActual.getValorToken() + " ";
+                }
                 emparejar(TokenC.Tipo.menor_que);
+            }
+            else if (tokenActual.getTipo() == TokenC.Tipo.menor_igual)
+            {
+                if (enfor)
+                {
+
+                }
+                else
+                {
+                    cadena_traducción += tokenActual.getValorToken() + " ";
+                }
+                emparejar(TokenC.Tipo.menor_igual);
             }
             else if (tokenActual.getTipo() == TokenC.Tipo.igualigual)
             {
-                cadena_traducción += tokenActual.getValorToken() + " ";
+                if (enfor)
+                {
+
+                }
+                else
+                {
+                    cadena_traducción += tokenActual.getValorToken() + " ";
+                }
                 emparejar(TokenC.Tipo.igualigual);
             }
             else if (tokenActual.getTipo() == TokenC.Tipo.diferente_que)
             {
-                cadena_traducción += tokenActual.getValorToken() + " ";
+                if (enfor)
+                {
+
+                }
+                else
+                {
+                    cadena_traducción += tokenActual.getValorToken() + " ";
+                }
                 emparejar(TokenC.Tipo.diferente_que);
             }
             else
             {
-                MessageBox.Show("Tiene que haber un operador entre números :c ", "Error Sintáctico");
+                //MessageBox.Show("Tiene que haber un operador entre números :c ", "Error Sintáctico");
             }
         }
         public void sentenciaelse()
@@ -826,6 +960,8 @@ namespace Proyecto2
                 casosycosas();
 
                 emparejar(TokenC.Tipo.llave_cerrar);
+
+                contenido();
             }
         }
 
@@ -840,7 +976,7 @@ namespace Proyecto2
                 {
                     emparejar(TokenC.Tipo.un_case);
 
-                    cadena_traducción += "if " + cadena_switch + " == " + tokenActual.getValorToken() + ":\n";
+                    cadena_traducción += mistabs + "if " + cadena_switch + " == " + tokenActual.getValorToken() + ":\n";
                     emparejar(TokenC.Tipo.numero);
                     emparejar(TokenC.Tipo.dospuntos);
 
@@ -860,7 +996,7 @@ namespace Proyecto2
                 {
                     emparejar(TokenC.Tipo.un_case);
 
-                    cadena_traducción += "elif " + cadena_switch + " == " + tokenActual.getValorToken() + ":";
+                    cadena_traducción += mistabs + "elif " + cadena_switch + " == " + tokenActual.getValorToken() + ":\n";
                     emparejar(TokenC.Tipo.numero);
                     emparejar(TokenC.Tipo.dospuntos);
 
@@ -901,20 +1037,107 @@ namespace Proyecto2
         {
             if (tokenActual.getTipo() == TokenC.Tipo.un_for)
             {
+                enfor = true;
                 emparejar(TokenC.Tipo.un_for);
+                cadena_traducción += "for ";
                 emparejar(TokenC.Tipo.parentesis_abrir);
-                emparejar(TokenC.Tipo.pr_int);
 
-                declaracionVariables();
+                //declaracionVariables();
+                if (tokenActual.getTipo() == TokenC.Tipo.pr_int)
+                {
+                    emparejar(TokenC.Tipo.pr_int);
+                    cadena_clave += tokenActual.getValorToken();
+                    cadena_traducción += tokenActual.getValorToken() + " in range( ";
+                    tablavalores.Add(cadena_clave, "");
+                    tablatipos.Add(cadena_clave, "");
+
+                    emparejar(TokenC.Tipo.nombre_algo);
+                    emparejar(TokenC.Tipo.igual);
+                    cadena_traducción += tokenActual.getValorToken() + ",";
+                    emparejar(TokenC.Tipo.numero);
+                    emparejar(TokenC.Tipo.puntoycoma);
+                }
+                else
+                {
+                    cadena_traducción += tokenActual.getValorToken() + " in range( ";
+                    emparejar(TokenC.Tipo.nombre_algo);
+                    emparejar(TokenC.Tipo.igual);
+                    cadena_traducción += tokenActual.getValorToken() + ",";
+                    emparejar(TokenC.Tipo.numero);
+                    emparejar(TokenC.Tipo.puntoycoma);               }
+                
+                
+
+                if (tokenActual.getTipo() == TokenC.Tipo.nombre_algo)
+                {
+                    emparejar(TokenC.Tipo.nombre_algo);
+
+                    operador();
+
+                    cadena_traducción += tokenActual.getValorToken() + ")\n";
+                    emparejar(TokenC.Tipo.numero);
+                }
+                else if (tokenActual.getTipo() == TokenC.Tipo.numero)
+                {
+                    cadena_traducción += tokenActual.getValorToken() + ")\n";
+                    emparejar(TokenC.Tipo.numero);
+                    operador();
+                    emparejar(TokenC.Tipo.nombre_algo);
+                }
+
+                emparejar(TokenC.Tipo.puntoycoma);
 
                 emparejar(TokenC.Tipo.nombre_algo);
 
-                operador();
+                if (tokenActual.getTipo() == TokenC.Tipo.masmas)
+                {
+                    emparejar(TokenC.Tipo.masmas);
+                }
+                else if (tokenActual.getTipo() == TokenC.Tipo.menosmenos)
+                {
+                    emparejar(TokenC.Tipo.menosmenos);
+                }
+
+                emparejar(TokenC.Tipo.parentesis_cerrar);
+                emparejar(TokenC.Tipo.llave_abrir);
 
 
+                mistabs.Append(tab); 
+                enfor = false;
+                contenido();
 
+                emparejar(TokenC.Tipo.llave_cerrar);
+                
+                mistabs.Length -= tab.Length;
+                contenido();
 
+            }
+        }
 
+        #endregion
+
+        #region while
+
+        public void sentenciawhile()
+        {
+            if (tokenActual.getTipo() == TokenC.Tipo.un_while)
+            {
+                emparejar(TokenC.Tipo.un_while);
+                cadena_traducción += "while ";
+                emparejar(TokenC.Tipo.parentesis_abrir);
+
+                comparacion();
+
+                emparejar(TokenC.Tipo.parentesis_cerrar);
+                cadena_traducción += ": \n";
+                emparejar(TokenC.Tipo.llave_abrir);
+
+                mistabs.Append(tab);
+                contenido();
+
+                emparejar(TokenC.Tipo.llave_cerrar);
+                mistabs.Length -= tab.Length;
+                contenido();
 
 
             }
@@ -922,7 +1145,7 @@ namespace Proyecto2
 
         #endregion
 
-        
+
 
 
         #region VOIDS DE BACKEND 

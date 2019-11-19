@@ -38,6 +38,9 @@
             this.documentoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generarTraducciónToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generarReportesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tablaDeTokensToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tablaDeSímbolosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tablaDeErroresToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.limpiarEspacioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ayudaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.acercaDeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,9 +52,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.fastColoredTextBox1 = new FastColoredTextBoxNS.FastColoredTextBox();
             this.fastColoredTextBox2 = new FastColoredTextBoxNS.FastColoredTextBox();
-            this.tablaDeTokensToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tablaDeSímbolosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tablaDeErroresToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fastColoredTextBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fastColoredTextBox2)).BeginInit();
@@ -67,7 +67,7 @@
             this.ayudaToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(670, 29);
+            this.menuStrip1.Size = new System.Drawing.Size(870, 29);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -131,6 +131,27 @@
             this.generarReportesToolStripMenuItem.Text = "Generar Reportes";
             this.generarReportesToolStripMenuItem.Click += new System.EventHandler(this.GenerarReportesToolStripMenuItem_Click);
             // 
+            // tablaDeTokensToolStripMenuItem
+            // 
+            this.tablaDeTokensToolStripMenuItem.Name = "tablaDeTokensToolStripMenuItem";
+            this.tablaDeTokensToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
+            this.tablaDeTokensToolStripMenuItem.Text = "Tabla de Tokens";
+            this.tablaDeTokensToolStripMenuItem.Click += new System.EventHandler(this.tablaDeTokensToolStripMenuItem_Click);
+            // 
+            // tablaDeSímbolosToolStripMenuItem
+            // 
+            this.tablaDeSímbolosToolStripMenuItem.Name = "tablaDeSímbolosToolStripMenuItem";
+            this.tablaDeSímbolosToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
+            this.tablaDeSímbolosToolStripMenuItem.Text = "Tabla de Símbolos";
+            this.tablaDeSímbolosToolStripMenuItem.Click += new System.EventHandler(this.tablaDeSímbolosToolStripMenuItem_Click);
+            // 
+            // tablaDeErroresToolStripMenuItem
+            // 
+            this.tablaDeErroresToolStripMenuItem.Name = "tablaDeErroresToolStripMenuItem";
+            this.tablaDeErroresToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
+            this.tablaDeErroresToolStripMenuItem.Text = "Tabla de Errores";
+            this.tablaDeErroresToolStripMenuItem.Click += new System.EventHandler(this.tablaDeErroresToolStripMenuItem_Click);
+            // 
             // limpiarEspacioToolStripMenuItem
             // 
             this.limpiarEspacioToolStripMenuItem.Name = "limpiarEspacioToolStripMenuItem";
@@ -159,7 +180,7 @@
             this.richTextBox3.Location = new System.Drawing.Point(15, 324);
             this.richTextBox3.Name = "richTextBox3";
             this.richTextBox3.ReadOnly = true;
-            this.richTextBox3.Size = new System.Drawing.Size(385, 142);
+            this.richTextBox3.Size = new System.Drawing.Size(479, 142);
             this.richTextBox3.TabIndex = 3;
             this.richTextBox3.Text = "";
             // 
@@ -167,7 +188,7 @@
             // 
             this.button1.BackColor = System.Drawing.Color.RosyBrown;
             this.button1.Font = new System.Drawing.Font("Yu Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(418, 383);
+            this.button1.Location = new System.Drawing.Point(572, 383);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(240, 40);
             this.button1.TabIndex = 4;
@@ -179,7 +200,7 @@
             // 
             this.button2.BackColor = System.Drawing.Color.RosyBrown;
             this.button2.Font = new System.Drawing.Font("Yu Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(418, 430);
+            this.button2.Location = new System.Drawing.Point(572, 430);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(240, 36);
             this.button2.TabIndex = 5;
@@ -202,7 +223,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Yu Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(415, 32);
+            this.label2.Location = new System.Drawing.Point(536, 32);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(154, 25);
             this.label2.TabIndex = 7;
@@ -240,6 +261,7 @@
             this.fastColoredTextBox1.CharWidth = 8;
             this.fastColoredTextBox1.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.fastColoredTextBox1.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.fastColoredTextBox1.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.fastColoredTextBox1.IsReplaceMode = false;
             this.fastColoredTextBox1.Language = FastColoredTextBoxNS.Language.CSharp;
             this.fastColoredTextBox1.LeftBracket = '(';
@@ -251,7 +273,7 @@
             this.fastColoredTextBox1.RightBracket2 = '}';
             this.fastColoredTextBox1.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.fastColoredTextBox1.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("fastColoredTextBox1.ServiceColors")));
-            this.fastColoredTextBox1.Size = new System.Drawing.Size(388, 233);
+            this.fastColoredTextBox1.Size = new System.Drawing.Size(482, 233);
             this.fastColoredTextBox1.TabIndex = 9;
             this.fastColoredTextBox1.Zoom = 100;
             // 
@@ -274,45 +296,25 @@
             this.fastColoredTextBox2.CharWidth = 8;
             this.fastColoredTextBox2.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.fastColoredTextBox2.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.fastColoredTextBox2.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.fastColoredTextBox2.IsReplaceMode = false;
-            this.fastColoredTextBox2.Location = new System.Drawing.Point(418, 60);
+            this.fastColoredTextBox2.Location = new System.Drawing.Point(541, 60);
             this.fastColoredTextBox2.Name = "fastColoredTextBox2";
             this.fastColoredTextBox2.Paddings = new System.Windows.Forms.Padding(0);
             this.fastColoredTextBox2.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.fastColoredTextBox2.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("fastColoredTextBox2.ServiceColors")));
-            this.fastColoredTextBox2.Size = new System.Drawing.Size(240, 317);
+            this.fastColoredTextBox2.Size = new System.Drawing.Size(299, 317);
             this.fastColoredTextBox2.TabIndex = 10;
             this.fastColoredTextBox2.Text = "#TEXTO EN PYTHON";
             this.fastColoredTextBox2.Zoom = 100;
             this.fastColoredTextBox2.Load += new System.EventHandler(this.fastColoredTextBox2_Load);
-            // 
-            // tablaDeTokensToolStripMenuItem
-            // 
-            this.tablaDeTokensToolStripMenuItem.Name = "tablaDeTokensToolStripMenuItem";
-            this.tablaDeTokensToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
-            this.tablaDeTokensToolStripMenuItem.Text = "Tabla de Tokens";
-            this.tablaDeTokensToolStripMenuItem.Click += new System.EventHandler(this.tablaDeTokensToolStripMenuItem_Click);
-            // 
-            // tablaDeSímbolosToolStripMenuItem
-            // 
-            this.tablaDeSímbolosToolStripMenuItem.Name = "tablaDeSímbolosToolStripMenuItem";
-            this.tablaDeSímbolosToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
-            this.tablaDeSímbolosToolStripMenuItem.Text = "Tabla de Símbolos";
-            this.tablaDeSímbolosToolStripMenuItem.Click += new System.EventHandler(this.tablaDeSímbolosToolStripMenuItem_Click);
-            // 
-            // tablaDeErroresToolStripMenuItem
-            // 
-            this.tablaDeErroresToolStripMenuItem.Name = "tablaDeErroresToolStripMenuItem";
-            this.tablaDeErroresToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
-            this.tablaDeErroresToolStripMenuItem.Text = "Tabla de Errores";
-            this.tablaDeErroresToolStripMenuItem.Click += new System.EventHandler(this.tablaDeErroresToolStripMenuItem_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DarkSalmon;
-            this.ClientSize = new System.Drawing.Size(670, 477);
+            this.ClientSize = new System.Drawing.Size(870, 482);
             this.Controls.Add(this.fastColoredTextBox2);
             this.Controls.Add(this.fastColoredTextBox1);
             this.Controls.Add(this.label3);

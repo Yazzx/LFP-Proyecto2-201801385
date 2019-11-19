@@ -11,7 +11,7 @@ namespace Proyecto2
     {
         private LinkedList<TokenC> Salida;
         private int estado;
-        private String auxlex;
+        private String auxlex, comentario;
 
         int contador;
 
@@ -38,7 +38,7 @@ namespace Proyecto2
 
         public LinkedList<TokenC> escanear(String entrada)
         {
-            entrada = entrada + '#';
+            entrada = entrada + '%';
             Salida = new LinkedList<TokenC>();
             estado = 0;
             auxlex = "";
@@ -104,13 +104,11 @@ namespace Proyecto2
                         }
                         else if (c.CompareTo('*') == 0)
                         {
+
+                            estado = 25;
                             auxlex += c;
-                            ObjToken o1 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 3, "por");
-                            ListaTokens.AddLast(o1);
-                            contatoken++;
                             contacolumna++;
-                            prabierta = true;
-                            agregarToken(TokenC.Tipo.por);
+
                         }
                         else if (c.CompareTo('>') == 0)
                         {
@@ -306,7 +304,7 @@ namespace Proyecto2
                         }
                         else
                         {
-                            if (c.CompareTo('#') == 0)
+                            if (c.CompareTo('%') == 0)
                             {
                                 //Hemos concluido el análisis léxico.
                                 Console.WriteLine("Hemos concluido el analiss con exito");
@@ -380,8 +378,8 @@ namespace Proyecto2
                             }
                             else
                             {
-                                MessageBox.Show("El texto ingresado contiene errores, por favor" +
-                                "corrígalos e intente de nuevo :c \n" + "->" + auxlex + "<-\n" + c, "Error de Léxico ");
+                               /* MessageBox.Show("El texto ingresado contiene errores, por favor" +
+                                "corrígalos e intente de nuevo :c \n" + "->" + auxlex + "<-\n" + c, "Error de Léxico ");*/
                                 ErrorLéxico e1 = new ErrorLéxico(contaerror, contafila, contacolumna, c, descerror);
                                 ListaDeErrores.AddLast(e1);
                                 contacolumna++;
@@ -400,6 +398,15 @@ namespace Proyecto2
                             ListaTokens.AddLast(o1);
                             contatoken++;
                             agregarToken(TokenC.Tipo.PR_CLASS);
+                            nvarabierta = true;
+                            i -= 1;
+                        }
+                        if (auxlex.Equals("graficarVector") || auxlex.Equals("graficarvector")|| auxlex.Equals(" graficarvector"))
+                        {
+                            ObjToken o1 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 10, "Palabra reservada - graficar");
+                            ListaTokens.AddLast(o1);
+                            contatoken++;
+                            agregarToken(TokenC.Tipo.graficar);
                             nvarabierta = true;
                             i -= 1;
                         }
@@ -591,6 +598,7 @@ namespace Proyecto2
                             ListaTokens.AddLast(o1);
                             contatoken++;
                             agregarToken(TokenC.Tipo.un_while);
+                            prabierta = true;
                             i -= 1;
                         }
                         else
@@ -647,31 +655,20 @@ namespace Proyecto2
                         }
                         else if (c.Equals('.'))
                         {
-                            estado = 4;
+                            estado = 27;
                             auxlex += c;
                             contacolumna++;
-                            if (ya_punto == 0)
-                            {
-                                ya_punto = 1;
-                            }
-                            else if (ya_punto == 1)
-                            {
-                                ya_punto = 2;
-                            }
-                        }
-                        else if (c.Equals('f') && ya_punto == 1)
-                        {
-                            estado = 5;
-                            auxlex += c;
-                            contacolumna++;
+                           
                         }
                         else
                         {
-                            ObjToken o4 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 12, "Número");
-                            ListaTokens.AddLast(o4);
-                            contatoken++;
-                            agregarToken(TokenC.Tipo.numero);
-                            i -= 1;
+                                ObjToken o4 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 12, "Número");
+                                ListaTokens.AddLast(o4);
+                                contatoken++;
+                                agregarToken(TokenC.Tipo.numero);
+                                i -= 1;
+                          
+                            
                         }
                         break;
                     #endregion
@@ -722,6 +719,12 @@ namespace Proyecto2
                             contacolumna++;
                             //así voy juntando divididos
                         }
+                        else if (c.Equals('*'))
+                        {
+                            estado = 23;
+                            auxlex += c;
+                            contacolumna++;
+                        }
                         else
                         {
                             ObjToken o7 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 12, "dividido");
@@ -734,12 +737,14 @@ namespace Proyecto2
                     #endregion
                     #region inicio comentario
                     case 9:
+
                         ObjToken o8 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 12, "com. 1 linea");
                         ListaTokens.AddLast(o8);
                         contatoken++;
                         agregarToken(TokenC.Tipo.comentario_unalinea);
                         i -= 1;
                         estado = 10;
+
                         break;
                     #endregion
                     #region cuerpo comentario 1 linea
@@ -932,8 +937,86 @@ namespace Proyecto2
                         contacolumna++;
                         agregarToken(TokenC.Tipo.menor_igual);
                         break;
-                        
-                        #endregion
+
+                    #endregion
+                    #region comentario multilinea
+                    case 23:
+
+                        ObjToken o21 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 12, "cmultilinea_abrir");
+                        ListaTokens.AddLast(o21);
+                        contatoken++;
+                        agregarToken(TokenC.Tipo.cmultilinea_abrir);
+                        //i -= 1;
+                        estado = 24;
+
+                        break;
+                    case 24:
+
+                        if (c.CompareTo('*') == 0)
+                        {
+
+                            ObjToken o9 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 12, "cuerpo com. multilinea");
+                            ListaTokens.AddLast(o9);
+                            contatoken++;
+                            agregarToken(TokenC.Tipo.cuerpo_comml);
+                            contacolumna++;
+                            i -= 1;
+
+                        }
+                        else
+                        {
+                            auxlex += c;
+                        }
+
+                        break; 
+                    case 25:
+
+                        if (c.Equals('/'))
+                        {
+                            estado = 26;
+                            auxlex += c;
+                            contacolumna++;
+                        }
+                        else
+                        {
+                            auxlex += c;
+                            ObjToken o22 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 3, "por");
+                            ListaTokens.AddLast(o22);
+                            contatoken++;
+                            contacolumna++;
+                            prabierta = true;
+                            agregarToken(TokenC.Tipo.por);
+                        }                        
+
+                        break;
+                    case 26:
+                        ObjToken o23 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 12, "cmultilinea_cerrar");
+                        ListaTokens.AddLast(o23);
+                        contatoken++;
+                        agregarToken(TokenC.Tipo.cmultilinea_cerrar);
+                        break;
+                    #endregion
+                    case 27:
+                        if (Char.IsDigit(c))
+                        {
+                            estado = 27;
+                            auxlex += c;
+                            contacolumna++;
+                            //así voy juntando digitos
+
+                        }
+                        else
+                        {
+                            ObjToken o4 = new ObjToken(contatoken, contafila, contacolumna, auxlex, 12, "Número decimal");
+                            ListaTokens.AddLast(o4);
+                            contatoken++;
+                            agregarToken(TokenC.Tipo.float_algo);
+                            i -= 1;
+
+                        }
+
+
+                        break;
                 }
 
             }

@@ -79,7 +79,8 @@ namespace Proyecto2
             pr_default,
 
             // sintáctico
-            ultimo
+            ultimo,
+            graficar
 
             // tipo general
             
@@ -156,6 +157,8 @@ namespace Proyecto2
                     return "numero";
                 case Tipo.espacio:
                     return "espacio";
+                case Tipo.graficar:
+                    return "graficar";
                 case Tipo.comillas_dobles:
                     return "comillas dobles";
                 case Tipo.comillas_simples:

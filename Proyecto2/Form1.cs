@@ -193,14 +193,20 @@ namespace Proyecto2
             //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             crearHTML(funcionaxfa, awadeuwu);
 
-            if (funcionaxfa.ListaDeErrores.Count > 0 || awadeuwu.ListaDeErrores.Count > 0)
+            if (funcionaxfa.ListaDeErrores.Count > 0 || awadeuwu.ListaDeErrores.Count > 1)
             {
+                String tttxtx = richTextBox3.Text;
                 //guardarHTML(mihtml);
+                fastColoredTextBox2.Text = awadeuwu.cadena_traducción;
+                richTextBox3.Text = awadeuwu.cadena_consola;
             }
             else
             {
+                String tttxtx = richTextBox3.Text;
                 fastColoredTextBox2.Text = awadeuwu.cadena_traducción;
+                richTextBox3.Text = awadeuwu.cadena_consola;
                 //crearPython(awadeuwu.cadena_traducción);
+                //crearTxt(tttxtx);
             }
 
 
@@ -248,6 +254,30 @@ namespace Proyecto2
                     throw;
                 }
                         
+        }
+
+        private void crearTxt(String cadena_traduccion)
+        {
+            try
+            {
+                string subpython = ".txt";
+                string subcs = ".cs";
+
+                rutapython.Length -= subcs.Length;
+                rutapython.Append(subpython);
+
+                Console.WriteLine(rutapython.ToString());
+
+                BinaryWriter bw = new BinaryWriter(File.Create(rutapython.ToString()));
+                bw.Write(cadena_traduccion);
+                bw.Dispose();
+                Console.WriteLine("Tu archivo ha sido creado <3");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Algo malo ha ocurrido </3");
+                throw;
+            }
         }
         private void crearTablaValores(AnalizadorSintáctico awadeuwu)
         {
